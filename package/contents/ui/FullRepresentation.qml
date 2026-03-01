@@ -41,18 +41,27 @@ Item {
 
             ToolButton {
                 icon.name: "view-sort"
-                text: root.currentSortOrder.charAt(0).toUpperCase() + root.currentSortOrder.slice(1)
-                display: AbstractButton.TextBesideIcon
+                display: AbstractButton.IconOnly
                 Layout.alignment: Qt.AlignVCenter
+                
+                ToolTip.text: "Sort: " + root.currentSortOrder.charAt(0).toUpperCase() + root.currentSortOrder.slice(1)
+                ToolTip.visible: hovered
 
                 onClicked: sortMenu.open()
 
                 Menu {
                     id: sortMenu
                     y: parent.height
+
+                    ActionGroup {
+                        id: sortGroup
+                        exclusive: true
+                    }
                     
                     MenuItem {
                         text: "Best"
+                        checkable: true
+                        ActionGroup.group: sortGroup
                         checked: root.currentSortOrder === "best"
                         onTriggered: {
                             root.currentSortOrder = "best"
@@ -61,6 +70,8 @@ Item {
                     }
                     MenuItem {
                         text: "Hot"
+                        checkable: true
+                        ActionGroup.group: sortGroup
                         checked: root.currentSortOrder === "hot"
                         onTriggered: {
                             root.currentSortOrder = "hot"
@@ -69,6 +80,8 @@ Item {
                     }
                     MenuItem {
                         text: "New"
+                        checkable: true
+                        ActionGroup.group: sortGroup
                         checked: root.currentSortOrder === "new"
                         onTriggered: {
                             root.currentSortOrder = "new"
@@ -77,6 +90,8 @@ Item {
                     }
                     MenuItem {
                         text: "Top"
+                        checkable: true
+                        ActionGroup.group: sortGroup
                         checked: root.currentSortOrder === "top"
                         onTriggered: {
                             root.currentSortOrder = "top"
@@ -85,6 +100,8 @@ Item {
                     }
                     MenuItem {
                         text: "Rising"
+                        checkable: true
+                        ActionGroup.group: sortGroup
                         checked: root.currentSortOrder === "rising"
                         onTriggered: {
                             root.currentSortOrder = "rising"
