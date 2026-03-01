@@ -16,23 +16,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - name: Get version from tag
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-        
       - name: Update metadata.json version
         run: |
-          VERSION_NUMBER=${VERSION#v}
+          VERSION_NUMBER=${GITHUB_REF_NAME#v}
           jq ".KPlugin.Version = \"$VERSION_NUMBER\"" package/metadata.json > package/metadata.tmp && mv package/metadata.tmp package/metadata.json
           
       - name: Package Plasmoid
         run: |
           cd package
-          zip -r ../plasma-reddit-feeder-${{ env.VERSION }}.plasmoid .
+          zip -r ../plasma-reddit-feeder-${{ github.ref_name }}.plasmoid .
           
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: plasma-reddit-feeder-${{ env.VERSION }}.plasmoid
-          name: Release ${{ env.VERSION }}
+          files: plasma-reddit-feeder-${{ github.ref_name }}.plasmoid
+          name: Release ${{ github.ref_name }}
           generate_release_notes: true
