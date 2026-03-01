@@ -1,0 +1,24 @@
+{
+    "KPlugin": {
+        "Id": "org.kde.plasma.redditfeeder",
+        "Name": "Reddit Feeder",
+        "Version": "0.1.0",
+        "Category": "Network",
+        "Description": "A customizable Reddit feed widget for KDE Plasma 6",
+        "Icon": "reddit",
+        "Authors": [
+            {
+                "Name": "Omar Criacci",
+                "Email": "omarcriacci@gmail.com"
+            }
+        ],
+        "License": "GPL-3.0",
+        "Website": "https://github.com/omarcriacci/plasma-reddit-feeder",
+        "BugReportUrl": "https://github.com/omarcriacci/plasma-reddit-feeder/issues",
+        "Copyright": "© 2026 Omar Criacci"
+    },
+    "X-Plasma-API": "declarativeappletscript",
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-MainScript": "ui/main.qml",
+    "KPackageStructure": "Plasma/Applet"
+}
