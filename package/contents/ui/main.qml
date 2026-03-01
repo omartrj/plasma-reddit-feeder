@@ -85,12 +85,26 @@ PlasmoidItem {
         xhr.open("GET", targetUrl)
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                root.isFetching = false
-                if (xhr.status === 200) {
-                    processRedditResponse(xhr.responseText)
-                } else {
-                    root.fetchError = "Failed to fetch data (HTTP " + xhr.status + ")"
-                    postsModel.clear()
+                var status = 0;
+                var text = "";
+                try {
+                    status = xhr.status;
+                    text = xhr.responseText;
+                } catch (e) {
+                    // Component or backend network reply destroyed, safely ignore
+                    return;
+                }
+
+                try {
+                    root.isFetching = false
+                    if (status === 200) {
+                        processRedditResponse(text)
+                    } else if (status !== 0) { // Ignore aborted connections (status 0)
+                        root.fetchError = "Failed to fetch data (HTTP " + status + ")"
+                        postsModel.clear()
+                    }
+                } catch (e) {
+                    // Root object might be destroyed
                 }
             }
         }

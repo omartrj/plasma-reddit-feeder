@@ -5,10 +5,19 @@ import org.kde.kirigami as Kirigami
 
 Kirigami.FormLayout {
     id: page
+    
+    // The "title" property is sometimes expected by parent containers in KCM/System Settings
+    property string title: "General"
 
+    // Automatically bound config properties
     property string cfg_subreddit: ""
+    property string cfg_subredditDefault: ""
+    
     property string cfg_sortOrder: "hot"
+    property string cfg_sortOrderDefault: "hot"
+    
     property int cfg_refreshInterval: 10
+    property int cfg_refreshIntervalDefault: 15
 
     onCfg_subredditChanged: updateModelFromText(cfg_subreddit)
     onCfg_sortOrderChanged: {
