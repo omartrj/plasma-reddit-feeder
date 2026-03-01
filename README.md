@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Reddit Feeder</h1>
+  <h1><img src="package/contents/images/icon.svg" width="48" align="center" /> Reddit Feeder</h1>
 
   <p>
     <img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-brown.svg?style=flat&logo=gnu" />
