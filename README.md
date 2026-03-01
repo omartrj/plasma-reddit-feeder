@@ -2,13 +2,13 @@
   <h1>Reddit Feeder</h1>
 
   <p>
-    <a href="https://www.gnu.org/licenses/gpl-3.0">
+    <a href="https://www.gnu.org/licenses/gpl-3.0" style="text-decoration: none;">
       <img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-brown.svg?style=flat&logo=gnu" />
     </a>
-    <a href="https://www.pling.com/p/2350142">
+    <a href="https://www.pling.com/p/2350142" style="text-decoration: none;">
       <img alt="KDE Store" src="https://img.shields.io/badge/KDE%20Store-Download-1d99f3?logo=kde&style=flat" />
     </a>
-    <a href="https://github.com/omartrj/plasma-reddit-feeder/stargazers">
+    <a href="https://github.com/omartrj/plasma-reddit-feeder/stargazers" style="text-decoration: none;">
       <img alt="GitHub stars" src="https://img.shields.io/github/stars/omartrj/plasma-reddit-feeder?color=red&style=flat&logo=github" />
     </a>
   </p>
