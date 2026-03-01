@@ -6,15 +6,18 @@ import org.kde.kirigami as Kirigami
 Kirigami.FormLayout {
     id: page
 
-    property alias cfg_subreddit: hiddenField.text
-    property alias cfg_sortOrder: sortOrderField.currentValue
-    property alias cfg_refreshInterval: refreshIntervalField.value
+    property string cfg_subreddit: ""
+    property string cfg_sortOrder: "hot"
+    property int cfg_refreshInterval: 10
 
-    TextField {
-        id: hiddenField
-        visible: false
-        onTextChanged: {
-            updateModelFromText(text)
+    onCfg_subredditChanged: updateModelFromText(cfg_subreddit)
+    onCfg_sortOrderChanged: {
+        var currentSort = cfg_sortOrder.toLowerCase()
+        for (var i = 0; i < sortOrderField.count; i++) {
+            if (sortOrderField.textAt(i).toLowerCase() === currentSort) {
+                sortOrderField.currentIndex = i
+                break
+            }
         }
     }
 
@@ -41,12 +44,17 @@ Kirigami.FormLayout {
         for (var i = 0; i < subredditModel.count; i++) {
             subs.push(subredditModel.get(i).name);
         }
-        hiddenField.text = subs.join('+');
+        page.cfg_subreddit = subs.join('+');
         updatingModel = false;
     }
 
     ListModel {
         id: subredditModel
+    }
+
+    Item {
+        Kirigami.FormData.label: "Reddit Feed"
+        Kirigami.FormData.isSection: true
     }
 
     RowLayout {
@@ -112,17 +120,9 @@ Kirigami.FormLayout {
         }
     }
 
-    Component.onCompleted: {
-        updateModelFromText(hiddenField.text)
-        
-        // Find correct index for sortOrder ComboBox upon initialization
-        var currentSort = hiddenField.parent.cfg_sortOrder.toLowerCase()
-        for (var i = 0; i < sortOrderField.count; i++) {
-            if (sortOrderField.textAt(i).toLowerCase() === currentSort) {
-                sortOrderField.currentIndex = i
-                break
-            }
-        }
+    Item {
+        Kirigami.FormData.label: "Preferences"
+        Kirigami.FormData.isSection: true
     }
 
     ComboBox {
@@ -130,7 +130,7 @@ Kirigami.FormLayout {
         Kirigami.FormData.label: "Default Sort:"
         model: ["Hot", "New", "Top", "Rising", "Best"]
         onCurrentTextChanged: {
-            hiddenField.parent.cfg_sortOrder = currentText.toLowerCase()
+            page.cfg_sortOrder = currentText.toLowerCase()
         }
     }
 
@@ -140,9 +140,9 @@ Kirigami.FormLayout {
         from: 1
         to: 1440
         stepSize: 1
-        value: hiddenField.parent.cfg_refreshInterval
+        value: page.cfg_refreshInterval
         onValueChanged: {
-            hiddenField.parent.cfg_refreshInterval = value
+            page.cfg_refreshInterval = value
         }
     }
 }
