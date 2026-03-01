@@ -65,7 +65,18 @@ Kirigami.FormLayout {
             id: newSubredditField
             placeholderText: "e.g. kde"
             Layout.fillWidth: true
-            onAccepted: addButton.clicked()
+            Keys.onReturnPressed: (event) => {
+                event.accepted = true
+                if (addButton.enabled) {
+                    addButton.clicked()
+                }
+            }
+            Keys.onEnterPressed: (event) => {
+                event.accepted = true
+                if (addButton.enabled) {
+                    addButton.clicked()
+                }
+            }
         }
 
         Button {
