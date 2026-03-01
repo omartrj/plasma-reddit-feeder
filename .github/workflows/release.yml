@@ -20,6 +20,11 @@ jobs:
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
         
+      - name: Update metadata.json version
+        run: |
+          VERSION_NUMBER=${VERSION#v}
+          jq ".KPlugin.Version = \"$VERSION_NUMBER\"" package/metadata.json > package/metadata.tmp && mv package/metadata.tmp package/metadata.json
+          
       - name: Package Plasmoid
         run: |
           cd package
