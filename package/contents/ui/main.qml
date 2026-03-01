@@ -48,8 +48,8 @@ PlasmoidItem {
     onRefreshIntervalChanged: refreshTimer.restart()
 
     // --- Methods ---
-    function updateSubredditList() {
-        var subs = root.configuredSubreddits.split('+')
+    function parseConfiguredSubreddits(subsString) {
+        var subs = subsString.split('+')
         var parsedList = []
         for (var i = 0; i < subs.length; i++) {
             var sub = subs[i].trim()
@@ -57,7 +57,11 @@ PlasmoidItem {
                 parsedList.push(sub)
             }
         }
-        root.activeSubredditList = parsedList
+        return parsedList
+    }
+
+    function updateSubredditList() {
+        root.activeSubredditList = parseConfiguredSubreddits(root.configuredSubreddits)
 
         if (root.activeSubredditList.length > 0) {
             // Default to the first configured subreddit if none is currently valid
@@ -102,6 +106,16 @@ PlasmoidItem {
         xhr.send()
     }
 
+    function decodeHtmlEntities(text) {
+        if (!text) return "";
+        return text.replace(/&amp;/g, '&')
+                   .replace(/&lt;/g, '<')
+                   .replace(/&gt;/g, '>')
+                   .replace(/&quot;/g, '"')
+                   .replace(/&#39;/g, "'")
+                   .replace(/&#x27;/g, "'");
+    }
+
     function processRedditResponse(responseText) {
         try {
             var json = JSON.parse(responseText)
@@ -117,12 +131,7 @@ PlasmoidItem {
                 var child = posts[i].data
                 var permalink = "https://www.reddit.com" + child.permalink
                 
-                var decodedTitle = child.title.replace(/&amp;/g, '&')
-                                              .replace(/&lt;/g, '<')
-                                              .replace(/&gt;/g, '>')
-                                              .replace(/&quot;/g, '"')
-                                              .replace(/&#39;/g, "'")
-                                              .replace(/&#x27;/g, "'");
+                var decodedTitle = decodeHtmlEntities(child.title);
 
                 postsModel.append({
                     "title": decodedTitle,
