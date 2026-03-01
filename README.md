@@ -28,23 +28,24 @@ Keep up with your favorite subreddits right from your desktop, fast and distract
 
 ## Installation
 
-### From Source
+### 1. KDE Store (Recommended)
+1. Right-click desktop > **Add widgets...**
+2. Click **Get New Widgets...**
+3. Search **Reddit Feeder** and install.
 
-You can install the widget directly using the standard `kpackagetool6`:
-
+### 2. GitHub Release
+Download the latest `.plasmoid` from [Releases](https://github.com/omartrj/plasma-reddit-feeder/releases) and install via terminal:
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/plasma-reddit-feeder.git
-cd plasma-reddit-feeder
+kpackagetool6 -t Plasma/Applet -i Downloads/plasma-reddit-feeder-*.plasmoid
+```
 
-# Install it for your user
+### 3. From Source
+```bash
+git clone https://github.com/omartrj/plasma-reddit-feeder.git
+cd plasma-reddit-feeder
 kpackagetool6 -t Plasma/Applet -i package/
 ```
-
-To update the widget after a `git pull`:
-```bash
-kpackagetool6 -t Plasma/Applet -u package/
-```
+To update: `kpackagetool6 -t Plasma/Applet -u package/`
 
 ## License
 
