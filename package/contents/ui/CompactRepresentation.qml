@@ -10,6 +10,7 @@ Item {
     Kirigami.Icon {
         anchors.fill: parent
         source: "reddit"
+        fallback: Qt.resolvedUrl("../images/icon.svg").toString().replace("file://", "")
     }
 
     MouseArea {
