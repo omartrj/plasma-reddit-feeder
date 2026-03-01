@@ -2,21 +2,15 @@
   <h1>Reddit Feeder</h1>
 
   <p>
-    <a href="https://www.gnu.org/licenses/gpl-3.0" style="text-decoration: none;">
-      <img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-brown.svg?style=flat&logo=gnu" />
-    </a>
-    <a href="https://www.pling.com/p/2350142" style="text-decoration: none;">
-      <img alt="KDE Store" src="https://img.shields.io/badge/KDE%20Store-Download-1d99f3?logo=kde&style=flat" />
-    </a>
-    <a href="https://github.com/omartrj/plasma-reddit-feeder/stargazers" style="text-decoration: none;">
-      <img alt="GitHub stars" src="https://img.shields.io/github/stars/omartrj/plasma-reddit-feeder?color=red&style=flat&logo=github" />
-    </a>
+    <img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-brown.svg?style=flat&logo=gnu" />
+    <img alt="KDE Store" src="https://img.shields.io/badge/KDE%20Store-Download-1d99f3?logo=kde&style=flat" />
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/omartrj/plasma-reddit-feeder?color=red&style=flat&logo=github" />
   </p>
 </div>
 
 A lightweight and customizable Reddit feed widget for KDE Plasma 6. 
 
-Keep up with your favorite subreddits right from your desktop, fast and distraction-free.
+Keep up with your favorite subreddits right from your desktop, fast and distraction-free. No credentials or API keys required.
 
 ## Features
 
@@ -32,6 +26,8 @@ Keep up with your favorite subreddits right from your desktop, fast and distract
 1. Right-click desktop > **Add widgets...**
 2. Click **Get New Widgets...**
 3. Search **Reddit Feeder** and install.
+
+Or visit the [KDE Store page](https://www.pling.com/p/2350142) and click **Install** to add it directly to your desktop.
 
 ### 2. GitHub Release
 Download the latest `.plasmoid` from [Releases](https://github.com/omartrj/plasma-reddit-feeder/releases) and install via terminal:
