@@ -7,24 +7,20 @@ import org.kde.kirigami as Kirigami
 PlasmoidItem {
     id: root
 
-    // --- Configuration Properties ---
     property string configuredSubreddits: Plasmoid.configuration.subreddit
     property int refreshInterval: Plasmoid.configuration.refreshInterval
     property string defaultSortOrder: Plasmoid.configuration.sortOrder
 
-    // --- State Properties ---
     property bool isFetching: false
     property string fetchError: ""
     property var activeSubredditList: []
     property string currentSubreddit: ""
     property string currentSortOrder: ""
 
-    // --- Models ---
     ListModel {
         id: postsModel
     }
 
-    // --- Lifecycle and Timers ---
     Timer {
         id: refreshTimer
         interval: root.refreshInterval * 60 * 1000
@@ -38,7 +34,6 @@ PlasmoidItem {
         updateSubredditList()
     }
 
-    // --- Property Observers ---
     onConfiguredSubredditsChanged: updateSubredditList()
     onDefaultSortOrderChanged: {
         if (root.currentSortOrder === "") {
@@ -46,8 +41,6 @@ PlasmoidItem {
         }
     }
     onRefreshIntervalChanged: refreshTimer.restart()
-
-    // --- Methods ---
     function parseConfiguredSubreddits(subsString) {
         var subs = subsString.split('+')
         var parsedList = []
@@ -64,7 +57,7 @@ PlasmoidItem {
         root.activeSubredditList = parseConfiguredSubreddits(root.configuredSubreddits)
 
         if (root.activeSubredditList.length > 0) {
-            // Default to the first configured subreddit if none is currently valid
+            // fallback to first subreddit if current is removed from config
             if (root.activeSubredditList.indexOf(root.currentSubreddit) === -1) {
                 root.currentSubreddit = root.activeSubredditList[0]
             }
@@ -72,7 +65,6 @@ PlasmoidItem {
             root.currentSubreddit = ""
         }
         
-        // Force refresh
         fetchRedditData()
     }
 
@@ -145,8 +137,6 @@ PlasmoidItem {
         }
     }
 
-    // --- User Interface ---
     compactRepresentation: CompactRepresentation {}
-
     fullRepresentation: FullRepresentation {}
 }
