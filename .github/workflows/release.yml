@@ -22,11 +22,12 @@ jobs:
         
       - name: Package Plasmoid
         run: |
-          zip -r plasma-reddit-feeder-${{ env.VERSION }}.zip package/
+          cd package
+          zip -r ../plasma-reddit-feeder-${{ env.VERSION }}.plasmoid .
           
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: plasma-reddit-feeder-${{ env.VERSION }}.zip
+          files: plasma-reddit-feeder-${{ env.VERSION }}.plasmoid
           name: Release ${{ env.VERSION }}
           generate_release_notes: true
