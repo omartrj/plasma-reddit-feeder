@@ -3,7 +3,7 @@ name: Build and Release Plasmoid
 on:
   push:
     tags:
-      - 'v*' # Si attiva quando pushi un tag che inizia con "v" (es. v1.0.0)
+      - 'v*'
 
 permissions:
   contents: write
@@ -22,7 +22,6 @@ jobs:
         
       - name: Package Plasmoid
         run: |
-          # Crea un archivio zip contenente il contenuto della cartella package
           zip -r plasma-reddit-feeder-${{ env.VERSION }}.zip package/
           
       - name: Create GitHub Release
