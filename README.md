@@ -45,7 +45,7 @@ git clone https://github.com/omartrj/plasma-reddit-feeder.git
 cd plasma-reddit-feeder
 kpackagetool6 -t Plasma/Applet -i package/
 ```
-To update: `kpackagetool6 -t Plasma/Applet -u package/`
+To update (after a git pull): `kpackagetool6 -t Plasma/Applet -u package/`
 
 ## License
 
