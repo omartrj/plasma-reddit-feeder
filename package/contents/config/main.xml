@@ -14,5 +14,8 @@
     <entry name="refreshInterval" type="Int">
       <default>15</default>
     </entry>
+    <entry name="iconStyle" type="String">
+      <default>automatic</default>
+    </entry>
   </group>
 </kcfg>

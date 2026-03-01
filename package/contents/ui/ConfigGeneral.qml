@@ -18,6 +18,9 @@ Kirigami.FormLayout {
     
     property int cfg_refreshInterval: 10
     property int cfg_refreshIntervalDefault: 15
+    
+    property string cfg_iconStyle: "automatic"
+    property string cfg_iconStyleDefault: "automatic"
 
     onCfg_subredditChanged: updateModelFromText(cfg_subreddit)
     onCfg_sortOrderChanged: {
@@ -25,6 +28,15 @@ Kirigami.FormLayout {
         for (var i = 0; i < sortOrderField.count; i++) {
             if (sortOrderField.textAt(i).toLowerCase() === currentSort) {
                 sortOrderField.currentIndex = i
+                break
+            }
+        }
+    }
+    onCfg_iconStyleChanged: {
+        var currentStyle = cfg_iconStyle.toLowerCase()
+        for (var i = 0; i < iconStyleField.count; i++) {
+            if (iconStyleField.textAt(i).toLowerCase() === currentStyle) {
+                iconStyleField.currentIndex = i
                 break
             }
         }
@@ -163,6 +175,15 @@ Kirigami.FormLayout {
         value: page.cfg_refreshInterval
         onValueChanged: {
             page.cfg_refreshInterval = value
+        }
+    }
+
+    ComboBox {
+        id: iconStyleField
+        Kirigami.FormData.label: "Icon Style:"
+        model: ["Automatic", "Colored", "Light", "Dark"]
+        onCurrentTextChanged: {
+            page.cfg_iconStyle = currentText.toLowerCase()
         }
     }
 }

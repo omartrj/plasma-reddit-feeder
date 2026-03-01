@@ -10,6 +10,7 @@ PlasmoidItem {
     property string configuredSubreddits: Plasmoid.configuration.subreddit
     property int refreshInterval: Plasmoid.configuration.refreshInterval
     property string defaultSortOrder: Plasmoid.configuration.sortOrder
+    property string iconStyle: Plasmoid.configuration.iconStyle
 
     property bool isFetching: false
     property string fetchError: ""

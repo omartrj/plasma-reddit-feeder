@@ -9,8 +9,23 @@ Item {
     
     Kirigami.Icon {
         anchors.fill: parent
-        source: "reddit"
-        fallback: Qt.resolvedUrl("../images/icon.svg").toString().replace("file://", "")
+        
+        source: {
+            if (root.iconStyle === "colored") return Qt.resolvedUrl("../images/icon.svg").toString().replace("file://", "")
+            if (root.iconStyle === "light") return Qt.resolvedUrl("../images/reddit-light.svg").toString().replace("file://", "")
+            if (root.iconStyle === "dark") return Qt.resolvedUrl("../images/reddit-dark.svg").toString().replace("file://", "")
+            
+            // Automatic behavior (default)
+            return "reddit"
+        }
+        
+        fallback: {
+            // When automatic is selected and "reddit" system icon fails, fallback to colored.
+            if (root.iconStyle === "automatic" || root.iconStyle === "") {
+                return Qt.resolvedUrl("../images/icon.svg").toString().replace("file://", "")
+            }
+            return ""
+        }
     }
 
     MouseArea {
