@@ -1,0 +1,33 @@
+name: Build and Release Plasmoid
+
+on:
+  push:
+    tags:
+      - 'v*' # Si attiva quando pushi un tag che inizia con "v" (es. v1.0.0)
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        
+      - name: Package Plasmoid
+        run: |
+          # Crea un archivio zip contenente il contenuto della cartella package
+          zip -r plasma-reddit-feeder-${{ env.VERSION }}.zip package/
+          
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: plasma-reddit-feeder-${{ env.VERSION }}.zip
+          name: Release ${{ env.VERSION }}
+          generate_release_notes: true
