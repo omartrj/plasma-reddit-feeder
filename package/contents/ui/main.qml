@@ -117,8 +117,15 @@ PlasmoidItem {
                 var child = posts[i].data
                 var permalink = "https://www.reddit.com" + child.permalink
                 
+                var decodedTitle = child.title.replace(/&amp;/g, '&')
+                                              .replace(/&lt;/g, '<')
+                                              .replace(/&gt;/g, '>')
+                                              .replace(/&quot;/g, '"')
+                                              .replace(/&#39;/g, "'")
+                                              .replace(/&#x27;/g, "'");
+
                 postsModel.append({
-                    "title": child.title,
+                    "title": decodedTitle,
                     "author": child.author,
                     "url": permalink
                 })
