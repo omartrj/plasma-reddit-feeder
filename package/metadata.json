@@ -13,8 +13,8 @@
                 "Email": "omarcriacci@gmail.com"
             }
         ],
-        "Website": "https://github.com/omarcriacci/plasma-reddit-feeder",
-        "BugReportUrl": "https://github.com/omarcriacci/plasma-reddit-feeder/issues",
+        "Website": "https://github.com/omartrj/plasma-reddit-feeder",
+        "BugReportUrl": "https://github.com/omartrj/plasma-reddit-feeder/issues",
         "Copyright": "© 2026 Omar Criacci"
     },
     "KPackageStructure": "Plasma/Applet",
