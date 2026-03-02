@@ -18,6 +18,7 @@ Keep up with your favorite subreddits right from your desktop, fast and distract
 - **Multi-Subreddit Support**: Add multiple subreddits via settings and switch between them instantly using the top tab bar.
 - **Dynamic Sorting**: Filter posts on the fly by Hot, New, Top, Best or Rising with a convenient dropdown menu.
 - **Auto-Refresh**: Configure a custom background refresh interval to ensure your feed is always up to date.
+- **Thumbnail Previews**: See post thumbnails directly in the feed for a more visual browsing experience.
 
 ![Desktop Mode](/assets/desktop.png)
 
