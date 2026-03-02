@@ -128,7 +128,7 @@ Item {
                 checkable: true
                 checked: !root.hideOnWindowDeactivate
                 
-                // Only show this button if we are in a popup from a panel, etc. Desktop widgets are inherently "pinned" as they don't auto-hide.
+                // Only show this button if we are in a popup from a panel
                 visible: Plasmoid.location !== PlasmaCore.Types.Floating
 
                 onToggled: {

@@ -14,6 +14,10 @@ PlasmoidItem {
     property bool showThumbnails: Plasmoid.configuration.showThumbnails
     property int titleFontSize: Plasmoid.configuration.titleFontSize
     property int authorFontSize: Plasmoid.configuration.authorFontSize
+    property bool showScore: Plasmoid.configuration.showScore
+    property bool showComments: Plasmoid.configuration.showComments
+    property bool showTags: Plasmoid.configuration.showTags
+    property bool showDate: Plasmoid.configuration.showDate
 
     property bool isFetching: false
     property string fetchError: ""
@@ -129,6 +133,27 @@ PlasmoidItem {
                    .replace(/&#x27;/g, "'");
     }
 
+    function timeSince(dateValue) {
+        var seconds = Math.floor((new Date() - new Date(dateValue * 1000)) / 1000);
+        var interval = seconds / 31536000;
+        if (interval > 1) return Math.floor(interval) + "y";
+        interval = seconds / 2592000;
+        if (interval > 1) return Math.floor(interval) + "mo";
+        interval = seconds / 86400;
+        if (interval > 1) return Math.floor(interval) + "d";
+        interval = seconds / 3600;
+        if (interval > 1) return Math.floor(interval) + "h";
+        interval = seconds / 60;
+        if (interval > 1) return Math.floor(interval) + "m";
+        return Math.floor(seconds) + "s";
+    }
+
+    function formatNumberShort(num) {
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+        if (num >= 1000) return (num / 1000).toFixed(1) + "k";
+        return num.toString();
+    }
+
     function processRedditResponse(responseText) {
         try {
             let json = JSON.parse(responseText)
@@ -154,7 +179,12 @@ PlasmoidItem {
                     "title": decodedTitle,
                     "author": child.author,
                     "url": permalink,
-                    "thumbnail": thumbnailUrl
+                    "thumbnail": thumbnailUrl,
+                    "score": formatNumberShort(child.score || 0),
+                    "num_comments": formatNumberShort(child.num_comments || 0),
+                    "over_18": !!child.over_18,
+                    "spoiler": !!child.spoiler,
+                    "created_utc": child.created_utc ? timeSince(child.created_utc) : ""
                 })
             }
         } catch (e) {

@@ -14,6 +14,26 @@ Kirigami.AbstractCard {
             Layout.fillWidth: true
             spacing: Kirigami.Units.smallSpacing
 
+            // author, date
+            RowLayout {
+                spacing: Kirigami.Units.smallSpacing
+                
+                Label {
+                    text: "u/" + model.author
+                    opacity: 0.7
+                    font.pointSize: root.authorFontSize
+                }
+
+                Label {
+                    visible: root.showDate && model.created_utc !== ""
+                    text: "• " + model.created_utc
+                    opacity: 0.7
+                    font.pointSize: root.authorFontSize
+                }
+
+                Item { Layout.fillWidth: true }
+            }
+
             Label {
                 text: model.title
                 font.bold: true
@@ -21,17 +41,85 @@ Kirigami.AbstractCard {
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
             }
+            
+            // Score, comments, tags
+            RowLayout {
+                spacing: Kirigami.Units.smallSpacing
+                visible: root.showScore || root.showComments || root.showTags
 
-            Label {
-                text: "u/" + model.author
-                opacity: 0.7
-                font.pointSize: root.authorFontSize
-                Layout.fillWidth: true
+                // Tag NSFW
+                Rectangle {
+                    visible: root.showTags && model.over_18
+                    color: Kirigami.Theme.negativeTextColor
+                    radius: Kirigami.Units.smallSpacing
+                    implicitWidth: nsfwLabel.implicitWidth + Kirigami.Units.smallSpacing * 2
+                    implicitHeight: nsfwLabel.implicitHeight + Kirigami.Units.smallSpacing
+
+                    Label {
+                        id: nsfwLabel
+                        text: "NSFW"
+                        font.pointSize: Math.max(6, root.authorFontSize - 2)
+                        font.bold: true
+                        color: Kirigami.Theme.backgroundColor
+                        anchors.centerIn: parent
+                    }
+                }
+
+                // Tag Spoiler
+                Rectangle {
+                    visible: root.showTags && model.spoiler
+                    color: Kirigami.Theme.neutralTextColor
+                    radius: Kirigami.Units.smallSpacing
+                    implicitWidth: spoilerLabel.implicitWidth + Kirigami.Units.smallSpacing * 2
+                    implicitHeight: spoilerLabel.implicitHeight + Kirigami.Units.smallSpacing
+
+                    Label {
+                        id: spoilerLabel
+                        text: "SPOILER"
+                        font.pointSize: Math.max(6, root.authorFontSize - 2)
+                        font.bold: true
+                        color: Kirigami.Theme.backgroundColor
+                        anchors.centerIn: parent
+                    }
+                }
+
+                // Score
+                RowLayout {
+                    visible: root.showScore
+                    spacing: Kirigami.Units.smallSpacing / 2
+                    Kirigami.Icon {
+                        source: "arrow-up-double"
+                        implicitWidth: Kirigami.Units.iconSizes.smallMedium
+                        implicitHeight: Kirigami.Units.iconSizes.smallMedium
+                        color: Kirigami.Theme.textColor
+                    }
+                    Label {
+                        text: model.score
+                        font.pointSize: root.authorFontSize
+                        opacity: 0.8
+                    }
+                }
+
+                // Comments
+                RowLayout {
+                    visible: root.showComments
+                    spacing: Kirigami.Units.smallSpacing / 2
+                    Kirigami.Icon {
+                        source: "edit-comment"
+                        implicitWidth: Kirigami.Units.iconSizes.smallMedium
+                        implicitHeight: Kirigami.Units.iconSizes.smallMedium
+                        color: Kirigami.Theme.textColor
+                    }
+                    Label {
+                        text: model.num_comments
+                        font.pointSize: root.authorFontSize
+                        opacity: 0.8
+                    }
+                }
             }
         }
 
-        Image {
-            source: model.thumbnail ? model.thumbnail : ""
+        Item {
             visible: root.showThumbnails && model.thumbnail && model.thumbnail !== ""
             
             // Adapt to the height of the text column to keep it proportional to the text
@@ -47,10 +135,30 @@ Kirigami.AbstractCard {
             
             Layout.preferredHeight: boundedSize
             Layout.preferredWidth: boundedSize
-            
             Layout.alignment: Qt.AlignTop
-            fillMode: Image.PreserveAspectCrop
-            asynchronous: true
+
+            Image {
+                anchors.fill: parent
+                source: model.thumbnail ? model.thumbnail : ""
+                fillMode: Image.PreserveAspectCrop
+                asynchronous: true
+                // "Blur" effect by heavily reducing opacity if it's sensitive content
+                opacity: (root.showTags && (model.over_18 || model.spoiler)) ? 0.15 : 1.0
+                
+                Behavior on opacity {
+                    NumberAnimation { duration: Kirigami.Units.shortDuration }
+                }
+            }
+            
+            // Icon to indicate content is hidden over the thumbnail
+            Kirigami.Icon {
+                anchors.centerIn: parent
+                width: Kirigami.Units.iconSizes.large
+                height: width
+                source: "view-hidden"
+                visible: root.showTags && (model.over_18 || model.spoiler)
+                opacity: 0.8
+            }
         }
     }
     

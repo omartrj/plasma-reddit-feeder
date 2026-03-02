@@ -15,16 +15,8 @@ Item {
             if (root.iconStyle === "light") return Qt.resolvedUrl("../images/icon-light.svg")
             if (root.iconStyle === "dark") return Qt.resolvedUrl("../images/icon-dark.svg")
             
-            // Automatic behavior (default)
-            return "reddit"
-        }
-        
-        fallback: {
-            // When automatic is selected and "reddit" system icon fails, fallback to colored.
-            if (root.iconStyle === "automatic" || root.iconStyle === "") {
-                return Qt.resolvedUrl("../images/icon.svg")
-            }
-            return ""
+            // Fallback to colored
+            return Qt.resolvedUrl("../images/icon.svg") 
         }
     }
 

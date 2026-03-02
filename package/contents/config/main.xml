@@ -15,7 +15,7 @@
       <default>5</default>
     </entry>
     <entry name="iconStyle" type="String">
-      <default>automatic</default>
+      <default>colored</default>
     </entry>
     <entry name="showThumbnails" type="Bool">
       <default>true</default>
@@ -25,6 +25,18 @@
     </entry>
     <entry name="authorFontSize" type="Int">
       <default>8</default>
+    </entry>
+    <entry name="showScore" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showComments" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showTags" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="showDate" type="Bool">
+      <default>true</default>
     </entry>
   </group>
 </kcfg>
