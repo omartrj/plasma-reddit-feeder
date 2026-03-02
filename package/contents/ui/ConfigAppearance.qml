@@ -14,6 +14,7 @@ Item {
     property alias cfg_showThumbnails: showThumbnailsField.checked
     property alias cfg_showScore: showScoreField.checked
     property alias cfg_showComments: showCommentsField.checked
+    property alias cfg_showFlairs: showFlairsField.checked
     property alias cfg_showTags: showTagsField.checked
     property alias cfg_showDate: showDateField.checked
     property alias cfg_titleFontSize: titleFontSizeField.value
@@ -56,6 +57,12 @@ Item {
             Item {
                 Kirigami.FormData.label: "Post Metadata"
                 Kirigami.FormData.isSection: true
+            }
+
+            CheckBox {
+                id: showFlairsField
+                Kirigami.FormData.label: "Flairs:"
+                text: "Show post flairs (e.g. News, Discussion)"
             }
 
             CheckBox {

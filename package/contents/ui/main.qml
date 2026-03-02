@@ -16,6 +16,7 @@ PlasmoidItem {
     property int authorFontSize: Plasmoid.configuration.authorFontSize
     property bool showScore: Plasmoid.configuration.showScore
     property bool showComments: Plasmoid.configuration.showComments
+    property bool showFlairs: Plasmoid.configuration.showFlairs
     property bool showTags: Plasmoid.configuration.showTags
     property bool showDate: Plasmoid.configuration.showDate
 
@@ -184,7 +185,9 @@ PlasmoidItem {
                     "num_comments": formatNumberShort(child.num_comments || 0),
                     "over_18": !!child.over_18,
                     "spoiler": !!child.spoiler,
-                    "created_utc": child.created_utc ? timeSince(child.created_utc) : ""
+                    "created_utc": child.created_utc ? timeSince(child.created_utc) : "",
+                    "flair_text": child.link_flair_text ? decodeHtmlEntities(child.link_flair_text) : "",
+                    "flair_color": child.link_flair_background_color || ""
                 })
             }
         } catch (e) {

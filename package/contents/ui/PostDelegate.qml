@@ -31,6 +31,45 @@ Kirigami.AbstractCard {
                     font.pointSize: root.authorFontSize
                 }
 
+                // Flair
+                Rectangle {
+                    visible: root.showFlairs && typeof model.flair_text !== "undefined" && model.flair_text !== ""
+                    color: {
+                        if (typeof model.flair_color !== "undefined" && model.flair_color !== "" && model.flair_color !== "transparent") {
+                            return model.flair_color;
+                        }
+                        return Kirigami.Theme.highlightColor;
+                    }
+                    radius: Kirigami.Units.smallSpacing
+                    implicitWidth: flairLabel.implicitWidth + Kirigami.Units.smallSpacing * 2
+                    implicitHeight: flairLabel.implicitHeight + Kirigami.Units.smallSpacing
+
+                    Label {
+                        id: flairLabel
+                        text: typeof model.flair_text !== "undefined" ? model.flair_text : ""
+                        font.pointSize: Math.max(8, root.authorFontSize - 1)
+                        font.bold: true
+                        color: {
+                            if (typeof model.flair_color !== "undefined"  && model.flair_color !== "" && model.flair_color !== "transparent") {
+                                let hex = model.flair_color.replace("#", "");
+                                if (hex.length === 3) {
+                                    hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+                                }
+                                if (hex.length === 6) {
+                                    let r = parseInt(hex.substr(0, 2), 16);
+                                    let g = parseInt(hex.substr(2, 2), 16);
+                                    let b = parseInt(hex.substr(4, 2), 16);
+                                    // Calculate relative luminance to determine text color
+                                    let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                                    return luma > 128 ? "#000000" : "#ffffff";
+                                }
+                            }
+                            return Kirigami.Theme.highlightedTextColor;
+                        }
+                        anchors.centerIn: parent
+                    }
+                }
+
                 Item { Layout.fillWidth: true }
             }
 
