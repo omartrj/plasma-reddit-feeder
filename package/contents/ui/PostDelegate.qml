@@ -12,14 +12,18 @@ Kirigami.AbstractCard {
         Image {
             source: model.thumbnail ? model.thumbnail : ""
             visible: root.showThumbnails && model.thumbnail && model.thumbnail !== ""
-            Layout.preferredWidth: Kirigami.Units.iconSizes.large
-            Layout.preferredHeight: Kirigami.Units.iconSizes.large
+            
+            // Adapt to the height of the text column to keep it proportional to the text
+            Layout.preferredHeight: textColumn.implicitHeight
+            Layout.preferredWidth: textColumn.implicitHeight
+            
             Layout.alignment: Qt.AlignTop
             fillMode: Image.PreserveAspectCrop
             asynchronous: true
         }
 
         ColumnLayout {
+            id: textColumn
             Layout.fillWidth: true
             spacing: Kirigami.Units.smallSpacing
 
