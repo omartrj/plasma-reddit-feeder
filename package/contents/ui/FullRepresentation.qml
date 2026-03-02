@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
+import org.kde.plasma.core as PlasmaCore
 
 Item {
     id: fullRoot
@@ -126,6 +127,10 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
                 checkable: true
                 checked: !root.hideOnWindowDeactivate
+                
+                // Only show this button if we are in a popup from a panel, etc. Desktop widgets are inherently "pinned" as they don't auto-hide.
+                visible: Plasmoid.location !== PlasmaCore.Types.Floating
+
                 onToggled: {
                     root.hideOnWindowDeactivate = !checked
                 }
