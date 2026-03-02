@@ -9,19 +9,6 @@ Kirigami.AbstractCard {
     contentItem: RowLayout {
         spacing: Kirigami.Units.largeSpacing
 
-        Image {
-            source: model.thumbnail ? model.thumbnail : ""
-            visible: root.showThumbnails && model.thumbnail && model.thumbnail !== ""
-            
-            // Adapt to the height of the text column to keep it proportional to the text
-            Layout.preferredHeight: textColumn.implicitHeight
-            Layout.preferredWidth: textColumn.implicitHeight
-            
-            Layout.alignment: Qt.AlignTop
-            fillMode: Image.PreserveAspectCrop
-            asynchronous: true
-        }
-
         ColumnLayout {
             id: textColumn
             Layout.fillWidth: true
@@ -41,6 +28,29 @@ Kirigami.AbstractCard {
                 font.pointSize: root.authorFontSize
                 Layout.fillWidth: true
             }
+        }
+
+        Image {
+            source: model.thumbnail ? model.thumbnail : ""
+            visible: root.showThumbnails && model.thumbnail && model.thumbnail !== ""
+            
+            // Adapt to the height of the text column to keep it proportional to the text
+            // Ensure minimum size for 1-line posts
+            // Ensure maximum size for excessively long posts
+            readonly property real boundedSize: {
+                let textHeight = textColumn.implicitHeight;
+                let minSize = Kirigami.Units.iconSizes.huge;
+                let maxSize = Kirigami.Units.iconSizes.enormous;
+                
+                return Math.min(maxSize, Math.max(minSize, textHeight));
+            }
+            
+            Layout.preferredHeight: boundedSize
+            Layout.preferredWidth: boundedSize
+            
+            Layout.alignment: Qt.AlignTop
+            fillMode: Image.PreserveAspectCrop
+            asynchronous: true
         }
     }
     
