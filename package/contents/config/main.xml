@@ -12,7 +12,7 @@
       <default>hot</default>
     </entry>
     <entry name="refreshInterval" type="Int">
-      <default>15</default>
+      <default>5</default>
     </entry>
     <entry name="iconStyle" type="String">
       <default>automatic</default>
