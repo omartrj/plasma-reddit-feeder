@@ -206,13 +206,10 @@ Item {
 
             SpinBox {
                 id: refreshIntervalField
-                Kirigami.FormData.label: "Refresh Interval:"
+                Kirigami.FormData.label: "Refresh Interval (minutes):"
                 from: 5
                 to: 60
                 stepSize: 1
-                textFromValue: function(value, locale) {
-                    return value + " minute" + (value === 1 ? "" : "s")
-                }
             }
         }
     }
