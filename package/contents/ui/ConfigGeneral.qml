@@ -148,7 +148,7 @@ Kirigami.FormLayout {
 
     ComboBox {
         id: iconStyleField
-        Kirigami.FormData.label: "Icon Style:"
+        Kirigami.FormData.label: "Icon Style (Compact view):"
         model: ["Automatic", "Colored", "Light", "Dark"]
         currentIndex: {
             let idx = ["automatic", "colored", "light", "dark"].indexOf(page.cfg_iconStyle.toLowerCase());
