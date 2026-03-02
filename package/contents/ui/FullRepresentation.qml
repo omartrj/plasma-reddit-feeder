@@ -34,6 +34,7 @@ Item {
                 onCurrentIndexChanged: {
                     if (currentIndex >= 0 && currentIndex < root.activeSubredditList.length) {
                         root.currentSubreddit = root.activeSubredditList[currentIndex]
+                        root.currentSortOrder = root.defaultSortOrder
                         root.fetchRedditData()
                     }
                 }

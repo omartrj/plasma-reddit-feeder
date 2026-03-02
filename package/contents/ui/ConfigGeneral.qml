@@ -23,24 +23,6 @@ Kirigami.FormLayout {
     property string cfg_iconStyleDefault: "automatic"
 
     onCfg_subredditChanged: updateModelFromText(cfg_subreddit)
-    onCfg_sortOrderChanged: {
-        var currentSort = cfg_sortOrder.toLowerCase()
-        for (var i = 0; i < sortOrderField.count; i++) {
-            if (sortOrderField.textAt(i).toLowerCase() === currentSort) {
-                sortOrderField.currentIndex = i
-                break
-            }
-        }
-    }
-    onCfg_iconStyleChanged: {
-        var currentStyle = cfg_iconStyle.toLowerCase()
-        for (var i = 0; i < iconStyleField.count; i++) {
-            if (iconStyleField.textAt(i).toLowerCase() === currentStyle) {
-                iconStyleField.currentIndex = i
-                break
-            }
-        }
-    }
 
     property bool updatingModel: false
 
@@ -161,7 +143,8 @@ Kirigami.FormLayout {
         id: sortOrderField
         Kirigami.FormData.label: "Default Sort:"
         model: ["Hot", "New", "Top", "Rising", "Best"]
-        onCurrentTextChanged: {
+        currentIndex: Math.max(0, ["hot", "new", "top", "rising", "best"].indexOf(page.cfg_sortOrder.toLowerCase()))
+        onActivated: {
             page.cfg_sortOrder = currentText.toLowerCase()
         }
     }
@@ -173,7 +156,7 @@ Kirigami.FormLayout {
         to: 1440
         stepSize: 1
         value: page.cfg_refreshInterval
-        onValueChanged: {
+        onValueModified: {
             page.cfg_refreshInterval = value
         }
     }
@@ -182,7 +165,8 @@ Kirigami.FormLayout {
         id: iconStyleField
         Kirigami.FormData.label: "Icon Style:"
         model: ["Automatic", "Colored", "Light", "Dark"]
-        onCurrentTextChanged: {
+        currentIndex: Math.max(0, ["automatic", "colored", "light", "dark"].indexOf(page.cfg_iconStyle.toLowerCase()))
+        onActivated: {
             page.cfg_iconStyle = currentText.toLowerCase()
         }
     }
