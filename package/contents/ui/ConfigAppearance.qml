@@ -68,7 +68,7 @@ Item {
             CheckBox {
                 id: showTagsField
                 Kirigami.FormData.label: "Tags:"
-                text: "Recognize NSFW/Spoiler content (blurs thumbnail)"
+                text: "Blur NSFW/Spoiler content"
             }
 
             CheckBox {
@@ -89,9 +89,9 @@ Item {
                 text: "Show relative publishing date"
             }
 
-            // TYPOGRAPHY
+            // FONTS
             Item {
-                Kirigami.FormData.label: "Typography"
+                Kirigami.FormData.label: "Fonts"
                 Kirigami.FormData.isSection: true
             }
 
