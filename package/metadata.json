@@ -2,7 +2,7 @@
     "KPlugin": {
         "Id": "org.kde.plasma.redditfeeder",
         "Name": "Reddit Feeder",
-        "Version": "0.3.0",
+        "Version": "0.3.1",
         "Description": "A customizable Reddit feed widget for KDE Plasma 6",
         "Category": "Online Services",
         "Icon": "reddit",
