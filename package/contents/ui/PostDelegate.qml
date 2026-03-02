@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import org.kde.kirigami as Kirigami
+import "Utils.js" as Utils
 
 Kirigami.AbstractCard {
     width: ListView.view.width
@@ -19,14 +20,14 @@ Kirigami.AbstractCard {
                 spacing: Kirigami.Units.smallSpacing
                 
                 Label {
-                    text: "u/" + model.author
+                    text: `u/${model.author}`
                     opacity: 0.7
                     font.pointSize: root.authorFontSize
                 }
 
                 Label {
                     visible: root.showDate && model.created_utc !== ""
-                    text: "• " + model.created_utc
+                    text: `• ${model.created_utc}`
                     opacity: 0.7
                     font.pointSize: root.authorFontSize
                 }
@@ -35,7 +36,7 @@ Kirigami.AbstractCard {
                 Rectangle {
                     visible: root.showFlairs && typeof model.flair_text !== "undefined" && model.flair_text !== ""
                     color: {
-                        if (typeof model.flair_color !== "undefined" && model.flair_color !== "" && model.flair_color !== "transparent") {
+                        if (model.flair_color && model.flair_color !== "transparent") {
                             return model.flair_color;
                         }
                         return Kirigami.Theme.highlightColor;
@@ -46,21 +47,20 @@ Kirigami.AbstractCard {
 
                     Label {
                         id: flairLabel
-                        text: typeof model.flair_text !== "undefined" ? model.flair_text : ""
+                        text: model.flair_text ?? ""
                         font.pointSize: Math.max(8, root.authorFontSize - 1)
                         font.bold: true
                         color: {
-                            if (typeof model.flair_color !== "undefined"  && model.flair_color !== "" && model.flair_color !== "transparent") {
+                            if (model.flair_color && model.flair_color !== "transparent") {
                                 let hex = model.flair_color.replace("#", "");
                                 if (hex.length === 3) {
-                                    hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+                                    hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
                                 }
                                 if (hex.length === 6) {
-                                    let r = parseInt(hex.substr(0, 2), 16);
-                                    let g = parseInt(hex.substr(2, 2), 16);
-                                    let b = parseInt(hex.substr(4, 2), 16);
-                                    // Calculate relative luminance to determine text color
-                                    let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                                    const r = parseInt(hex.substr(0, 2), 16);
+                                    const g = parseInt(hex.substr(2, 2), 16);
+                                    const b = parseInt(hex.substr(4, 2), 16);
+                                    const luma = Utils.getLuminance(r, g, b);
                                     return luma > 128 ? "#000000" : "#ffffff";
                                 }
                             }
@@ -165,9 +165,9 @@ Kirigami.AbstractCard {
             // Ensure minimum size for 1-line posts
             // Ensure maximum size for excessively long posts
             readonly property real boundedSize: {
-                let textHeight = textColumn.implicitHeight;
-                let minSize = Kirigami.Units.iconSizes.huge;
-                let maxSize = Kirigami.Units.iconSizes.enormous;
+                const textHeight = textColumn.implicitHeight;
+                const minSize = Kirigami.Units.iconSizes.huge;
+                const maxSize = Kirigami.Units.iconSizes.enormous;
                 
                 return Math.min(maxSize, Math.max(minSize, textHeight));
             }
@@ -178,7 +178,7 @@ Kirigami.AbstractCard {
 
             Image {
                 anchors.fill: parent
-                source: model.thumbnail ? model.thumbnail : ""
+                source: model.thumbnail ?? ""
                 fillMode: Image.PreserveAspectCrop
                 asynchronous: true
                 // "Blur" effect by heavily reducing opacity if it's sensitive content

@@ -25,21 +25,21 @@ Item {
                 clip: true
                 
                 currentIndex: {
-                    let idx = root.activeSubredditList ? root.activeSubredditList.indexOf(root.currentSubreddit) : -1;
+                    const idx = root.activeSubredditList?.indexOf(root.currentSubreddit) ?? -1;
                     return idx >= 0 ? idx : 0;
                 }
                 
                 Repeater {
                     model: root.activeSubredditList
                     delegate: TabButton {
-                        text: "r/" + modelData
+                        text: `r/${modelData}`
                         width: implicitWidth
                     }
                 }
 
                 onCurrentIndexChanged: {
-                    if (root.activeSubredditList && currentIndex >= 0 && currentIndex < root.activeSubredditList.length) {
-                        let newlySelected = root.activeSubredditList[currentIndex]
+                    if (root.activeSubredditList?.[currentIndex]) {
+                        const newlySelected = root.activeSubredditList[currentIndex]
                         if (root.currentSubreddit !== newlySelected) {
                             // Don't fetch again if we are already fetching the same thing
                             if (root.isFetching && root.currentSubreddit === newlySelected) return;
@@ -56,7 +56,7 @@ Item {
                 display: AbstractButton.IconOnly
                 Layout.alignment: Qt.AlignVCenter
                 
-                ToolTip.text: "Sort: " + root.currentSortOrder.charAt(0).toUpperCase() + root.currentSortOrder.slice(1)
+                ToolTip.text: `Sort: ${root.currentSortOrder.charAt(0).toUpperCase()}${root.currentSortOrder.slice(1)}`
                 ToolTip.visible: hovered
 
                 onClicked: sortMenu.open()
