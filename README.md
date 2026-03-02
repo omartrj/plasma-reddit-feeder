@@ -9,16 +9,17 @@
   </p>
 </div>
 
-A lightweight and customizable Reddit feed widget for KDE Plasma 6. 
+A lightweight and **highly customizable** Reddit feed widget for KDE Plasma 6. 
 
 Keep up with your favorite subreddits right from your desktop, fast and distraction-free. No credentials or API keys required.
 
 ## Features
 
 - **Multi-Subreddit Support**: Add multiple subreddits via settings and switch between them instantly using the top tab bar.
+- **Thumbnail Previews**: See post thumbnails directly in the feed for a more visual browsing experience.
+- **Highly Customizable**: Choose yourself what post details to show, such as author, upvotes, comments, tags and spoiler/NSFW indicators.
 - **Dynamic Sorting**: Filter posts on the fly by Hot, New, Top, Best or Rising with a convenient dropdown menu.
 - **Auto-Refresh**: Configure a custom background refresh interval to ensure your feed is always up to date.
-- **Thumbnail Previews**: See post thumbnails directly in the feed for a more visual browsing experience.
 
 ![Desktop Mode](/assets/desktop.png)
 
