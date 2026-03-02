@@ -26,6 +26,8 @@ PlasmoidItem {
     property string currentSubreddit: ""
     property string currentSortOrder: ""
     property var currentRequest: null
+    property var redditCache: ({}) // Stores cached JSON responses
+    property var activeBackgroundRequests: ({}) // Prevent GC of background XHRs
 
     ListModel {
         id: postsModel
@@ -36,12 +38,18 @@ PlasmoidItem {
         interval: root.refreshInterval * 60 * 1000
         running: true
         repeat: true
-        onTriggered: fetchRedditData()
+        onTriggered: fetchAllSubreddits()
     }
 
     Component.onCompleted: {
         root.currentSortOrder = root.defaultSortOrder
         updateSubredditList()
+    }
+
+    onExpandedChanged: {
+        if (expanded) {
+            fetchAllSubreddits()
+        }
     }
 
     onConfiguredSubredditsChanged: updateSubredditList()
@@ -67,7 +75,68 @@ PlasmoidItem {
             root.currentSubreddit = ""
         }
         
-        fetchRedditData()
+        fetchAllSubreddits()
+    }
+
+    function fetchAllSubreddits() {
+        if (!root.activeSubredditList || root.activeSubredditList.length === 0) return
+        
+        let sortMode = root.currentSortOrder || "hot"
+        
+        for (let i = 0; i < root.activeSubredditList.length; i++) {
+            let sub = root.activeSubredditList[i]
+            let cacheKey = sub + "_" + sortMode
+            
+            let bgXhr = new XMLHttpRequest()
+            root.activeBackgroundRequests[cacheKey] = bgXhr // prevent GC destruction
+            
+            let targetUrl = "https://www.reddit.com/r/" + sub + "/" + sortMode + ".json"
+            
+            bgXhr.open("GET", targetUrl)
+            bgXhr.onreadystatechange = function() {
+                if (bgXhr.readyState === XMLHttpRequest.DONE) {
+                    if (bgXhr.status === 200) {
+                        root.redditCache[cacheKey] = bgXhr.responseText
+                        if (sub === root.currentSubreddit && sortMode === (root.currentSortOrder || "hot")) {
+                            root.isFetching = false
+                            root.fetchError = ""
+                            processRedditResponse(bgXhr.responseText, false)
+                        }
+                    } else if (sub === root.currentSubreddit && sortMode === (root.currentSortOrder || "hot")) {
+                        root.isFetching = false
+                        root.fetchError = "Failed to fetch data (HTTP " + bgXhr.status + ")"
+                    }
+                    delete root.activeBackgroundRequests[cacheKey]
+                }
+            }
+            bgXhr.setRequestHeader("User-Agent", "plasma-reddit-feeder/1.2 (KDE Plasma 6)")
+            bgXhr.send()
+        }
+    }
+
+    function loadCurrentSubredditFromCache() {
+        if (!root.currentSubreddit || root.currentSubreddit === "") {
+            postsModel.clear()
+            root.fetchError = "No subreddits configured"
+            return
+        }
+
+        let cacheKey = root.currentSubreddit + "_" + (root.currentSortOrder || "hot")
+        
+        if (root.redditCache[cacheKey]) {
+            root.isFetching = false
+            root.fetchError = ""
+            processRedditResponse(root.redditCache[cacheKey], true)
+        } else {
+            root.isFetching = true
+            root.fetchError = ""
+            postsModel.clear()
+            
+            // Trigger fetch only if isn't actively downloading
+            if (!root.activeBackgroundRequests[cacheKey]) {
+                fetchRedditData()
+            }
+        }
     }
 
     function fetchRedditData() {
@@ -77,14 +146,22 @@ PlasmoidItem {
             return
         }
 
+        let cacheKey = root.currentSubreddit + "_" + (root.currentSortOrder || "hot")
+        
+        // Immediately load from cache if available to avoid waiting
+        if (root.redditCache[cacheKey]) {
+            processRedditResponse(root.redditCache[cacheKey], true)
+        } else {
+            root.isFetching = true
+            root.fetchError = ""
+            postsModel.clear()
+        }
+
         if (root.currentRequest) {
             root.currentRequest.abort()
         }
-
-        root.isFetching = true
-        root.fetchError = ""
-        postsModel.clear()
         
+        // Fetch new data in the background
         let xhr = new XMLHttpRequest()
         root.currentRequest = xhr
         let targetUrl = "https://www.reddit.com/r/" + root.currentSubreddit + "/" + (root.currentSortOrder || "hot") + ".json"
@@ -112,7 +189,9 @@ PlasmoidItem {
                     }
                     root.isFetching = false
                     if (status === 200) {
-                        processRedditResponse(text)
+                        // Update cache
+                        root.redditCache[cacheKey] = text
+                        processRedditResponse(text, false)
                     } else {
                         root.fetchError = "Failed to fetch data (HTTP " + status + ")"
                     }
@@ -155,15 +234,18 @@ PlasmoidItem {
         return num.toString();
     }
 
-    function processRedditResponse(responseText) {
+    function processRedditResponse(responseText, fromCache) {
         try {
             let json = JSON.parse(responseText)
             if (!json || !json.data || !json.data.children) {
-                root.fetchError = "Invalid data format received"
+                if (!fromCache) root.fetchError = "Invalid data format received"
                 return
             }
 
             let posts = json.data.children
+
+            // Clear old posts only when we have successfully parsed the new data
+            postsModel.clear()
 
             for (let i = 0; i < posts.length; i++) {
                 let child = posts[i].data

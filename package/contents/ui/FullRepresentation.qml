@@ -41,9 +41,11 @@ Item {
                     if (root.activeSubredditList && currentIndex >= 0 && currentIndex < root.activeSubredditList.length) {
                         let newlySelected = root.activeSubredditList[currentIndex]
                         if (root.currentSubreddit !== newlySelected) {
+                            // Don't fetch again if we are already fetching the same thing
+                            if (root.isFetching && root.currentSubreddit === newlySelected) return;
                             root.currentSubreddit = newlySelected
                             root.currentSortOrder = root.defaultSortOrder
-                            root.fetchRedditData()
+                            root.loadCurrentSubredditFromCache()
                         }
                     }
                 }
