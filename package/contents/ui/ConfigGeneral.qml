@@ -6,7 +6,7 @@ import org.kde.kirigami as Kirigami
 Item {
     id: page
     implicitWidth: Kirigami.Units.gridUnit * 25
-    implicitHeight: Kirigami.Units.gridUnit * 30
+    implicitHeight: Kirigami.Units.gridUnit * 35
     
     property string title: "Feed Settings"
 
@@ -95,9 +95,9 @@ Item {
             Rectangle {
                 Kirigami.FormData.label: "Active:"
                 Layout.fillWidth: true
-                implicitHeight: Kirigami.Units.gridUnit * 6
+                implicitHeight: Kirigami.Units.gridUnit * 12
                 color: Kirigami.Theme.backgroundColor
-                border.color: Kirigami.Theme.focusColor
+                border.color: Kirigami.Theme.alternateBackgroundColor
                 radius: Kirigami.Units.smallSpacing
 
                 ScrollView {
@@ -108,23 +108,69 @@ Item {
                         id: subredditList
                         model: subredditModel
                         clip: true
+                        spacing: Kirigami.Units.smallSpacing
                         
-                        delegate: RowLayout {
+                        move: Transition {
+                            NumberAnimation { properties: "y"; duration: 150; easing.type: Easing.OutQuad }
+                        }
+                        
+                        delegate: Rectangle {
                             width: ListView.view.width
-                            
-                            Label {
-                                text: model.name
-                                Layout.fillWidth: true
-                                elide: Text.ElideRight
-                            }
-                            
-                            ToolButton {
-                                icon.name: "list-remove"
-                                text: "Remove"
-                                display: AbstractButton.IconOnly
-                                onClicked: {
-                                    subredditModel.remove(index)
-                                    page.updateTextFromModel()
+                            implicitHeight: rowLayout.implicitHeight + (Kirigami.Units.smallSpacing * 2)
+                            color: Kirigami.Theme.backgroundColor
+                            border.color: Kirigami.Theme.alternateBackgroundColor
+                            radius: Kirigami.Units.smallSpacing
+
+                            RowLayout {
+                                id: rowLayout
+                                anchors.fill: parent
+                                anchors.margins: Kirigami.Units.smallSpacing
+                                
+                                Label {
+                                    text: model.name
+                                    Layout.fillWidth: true
+                                    elide: Text.ElideRight
+                                    Layout.alignment: Qt.AlignVCenter
+                                }
+                                
+                                ToolButton {
+                                    icon.name: "go-up"
+                                    display: AbstractButton.IconOnly
+                                    Layout.alignment: Qt.AlignVCenter
+                                    ToolTip.text: "Move Up"
+                                    ToolTip.visible: hovered
+                                    enabled: index > 0
+                                    onClicked: {
+                                        subredditModel.move(index, index - 1, 1)
+                                        page.updateTextFromModel()
+                                    }
+                                }
+
+                                ToolButton {
+                                    icon.name: "go-down"
+                                    display: AbstractButton.IconOnly
+                                    Layout.alignment: Qt.AlignVCenter
+                                    ToolTip.text: "Move Down"
+                                    ToolTip.visible: hovered
+                                    enabled: index < subredditModel.count - 1
+                                    onClicked: {
+                                        subredditModel.move(index, index + 1, 1)
+                                        page.updateTextFromModel()
+                                    }
+                                }
+
+                                ToolButton {
+                                    id: removeButton
+                                    icon.name: "list-remove"
+                                    text: "Remove"
+                                    display: AbstractButton.IconOnly
+                                    Layout.alignment: Qt.AlignVCenter
+                                    ToolTip.text: "Remove"
+                                    ToolTip.visible: hovered
+                                    onClicked: {
+                                        subredditModel.remove(index)
+                                        page.updateTextFromModel()
+                                    }
                                 }
                             }
                         }
