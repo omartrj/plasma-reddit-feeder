@@ -12,8 +12,8 @@ Item {
         
         source: {
             if (root.iconStyle === "colored") return Qt.resolvedUrl("../images/icon.svg")
-            if (root.iconStyle === "light") return Qt.resolvedUrl("../images/reddit-light.svg")
-            if (root.iconStyle === "dark") return Qt.resolvedUrl("../images/reddit-dark.svg")
+            if (root.iconStyle === "light") return Qt.resolvedUrl("../images/icon-light.svg")
+            if (root.iconStyle === "dark") return Qt.resolvedUrl("../images/icon-dark.svg")
             
             // Automatic behavior (default)
             return "reddit"
