@@ -9,6 +9,16 @@ Kirigami.AbstractCard {
     contentItem: RowLayout {
         spacing: Kirigami.Units.largeSpacing
 
+        Image {
+            source: model.thumbnail ? model.thumbnail : ""
+            visible: root.showThumbnails && model.thumbnail && model.thumbnail !== ""
+            Layout.preferredWidth: Kirigami.Units.iconSizes.large
+            Layout.preferredHeight: Kirigami.Units.iconSizes.large
+            Layout.alignment: Qt.AlignTop
+            fillMode: Image.PreserveAspectCrop
+            asynchronous: true
+        }
+
         ColumnLayout {
             Layout.fillWidth: true
             spacing: Kirigami.Units.smallSpacing

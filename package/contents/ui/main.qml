@@ -11,6 +11,7 @@ PlasmoidItem {
     property int refreshInterval: Plasmoid.configuration.refreshInterval
     property string defaultSortOrder: Plasmoid.configuration.sortOrder
     property string iconStyle: Plasmoid.configuration.iconStyle
+    property bool showThumbnails: Plasmoid.configuration.showThumbnails
 
     property bool isFetching: false
     property string fetchError: ""
@@ -141,11 +142,17 @@ PlasmoidItem {
                 let permalink = "https://www.reddit.com" + child.permalink
                 
                 let decodedTitle = decodeHtmlEntities(child.title);
+                
+                let thumbnailUrl = ""
+                if (child.thumbnail && child.thumbnail.startsWith("http")) {
+                    thumbnailUrl = decodeHtmlEntities(child.thumbnail)
+                }
 
                 postsModel.append({
                     "title": decodedTitle,
                     "author": child.author,
-                    "url": permalink
+                    "url": permalink,
+                    "thumbnail": thumbnailUrl
                 })
             }
         } catch (e) {

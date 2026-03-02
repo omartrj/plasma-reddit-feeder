@@ -11,9 +11,11 @@ Kirigami.FormLayout {
 
     // Automatically bound config properties
     property string cfg_subreddit: ""
+    property string cfg_subredditDefault: ""
     property string cfg_sortOrder: "hot"
     property string cfg_iconStyle: "automatic"
     property alias cfg_refreshInterval: refreshIntervalField.value
+    property alias cfg_showThumbnails: showThumbnailsField.checked
 
     onCfg_subredditChanged: updateModelFromText(cfg_subreddit)
 
@@ -148,7 +150,7 @@ Kirigami.FormLayout {
 
     ComboBox {
         id: iconStyleField
-        Kirigami.FormData.label: "Icon Style (Compact view):"
+        Kirigami.FormData.label: "Icon Style:"
         model: ["Automatic", "Colored", "Light", "Dark"]
         currentIndex: {
             let idx = ["automatic", "colored", "light", "dark"].indexOf(page.cfg_iconStyle.toLowerCase());
@@ -157,5 +159,11 @@ Kirigami.FormLayout {
         onActivated: {
             page.cfg_iconStyle = currentText.toLowerCase()
         }
+    }
+
+    CheckBox {
+        id: showThumbnailsField
+        Kirigami.FormData.label: "Thumbnails:"
+        text: "Show images next to posts"
     }
 }

@@ -17,5 +17,8 @@
     <entry name="iconStyle" type="String">
       <default>automatic</default>
     </entry>
+    <entry name="showThumbnails" type="Bool">
+      <default>true</default>
+    </entry>
   </group>
 </kcfg>
