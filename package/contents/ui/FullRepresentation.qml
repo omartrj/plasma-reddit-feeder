@@ -11,6 +11,12 @@ Item {
     Layout.preferredWidth: Kirigami.Units.gridUnit * 18
     Layout.minimumHeight: Kirigami.Units.gridUnit * 24
 
+    function resetScroll() {
+        if (listView) {
+            listView.positionViewAtBeginning()
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
@@ -41,8 +47,6 @@ Item {
                     if (root.activeSubredditList?.[currentIndex]) {
                         const newlySelected = root.activeSubredditList[currentIndex]
                         if (root.currentSubreddit !== newlySelected) {
-                            // Don't fetch again if we are already fetching the same thing
-                            if (root.isFetching && root.currentSubreddit === newlySelected) return;
                             root.currentSubreddit = newlySelected
                             root.currentSortOrder = root.defaultSortOrder
                             root.loadCurrentSubredditFromCache()
@@ -170,6 +174,13 @@ Item {
                 text: root.isFetching ? "Loading Posts..." : (root.fetchError !== "" ? root.fetchError : "No posts found")
                 icon.name: root.isFetching ? "view-refresh" : (root.fetchError !== "" ? "network-disconnect" : "application-rss+xml")
             }
+        }
+    }
+
+    Connections {
+        target: root
+        function onNewDataAvailable() {
+            fullRoot.resetScroll()
         }
     }
 }

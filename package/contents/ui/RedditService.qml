@@ -20,7 +20,7 @@ Item {
 
     // Outputs
     property alias postsModel: postsModelObj
-    signal dataRefreshed()
+    signal newDataAvailable()
 
     ListModel {
         id: postsModelObj
@@ -68,11 +68,34 @@ Item {
             bgXhr.onreadystatechange = () => {
                 if (bgXhr.readyState === XMLHttpRequest.DONE) {
                     if (bgXhr.status === 200) {
-                        service.redditCache[cacheKey] = bgXhr.responseText
+                        const newText = bgXhr.responseText
+                        
+                        let isNewData = true
+                        if (service.redditCache[cacheKey]) {
+                            try {
+                                const oldJson = JSON.parse(service.redditCache[cacheKey])
+                                const newJson = JSON.parse(newText)
+                                const oldFirstId = oldJson?.data?.children?.[0]?.data?.id
+                                const newFirstId = newJson?.data?.children?.[0]?.data?.id
+                                
+                                if (oldFirstId && newFirstId && oldFirstId === newFirstId) {
+                                    isNewData = false
+                                }
+                            } catch (e) {
+                                // Fallback: if parsing fails, assume it's new data
+                            }
+                        }
+                        
+                        service.redditCache[cacheKey] = newText
+                        
                         if (sub === service.currentSubreddit && sortMode === (service.currentSortOrder || "hot")) {
                             service.isFetching = false
                             service.fetchError = ""
-                            processRedditResponse(bgXhr.responseText, false)
+                            processRedditResponse(newText, false)
+                            // Notify the UI to scroll ONLY if the background fetch found a new topmost post
+                            if (isNewData) {
+                                service.newDataAvailable()
+                            }
                         }
                     } else if (sub === service.currentSubreddit && sortMode === (service.currentSortOrder || "hot")) {
                         service.isFetching = false
@@ -99,7 +122,6 @@ Item {
             service.isFetching = false
             service.fetchError = ""
             processRedditResponse(service.redditCache[cacheKey], true)
-            service.dataRefreshed()
         } else {
             service.isFetching = true
             service.fetchError = ""
@@ -208,7 +230,6 @@ Item {
                     "flair_color": child.link_flair_background_color || ""
                 })
             }
-            service.dataRefreshed()
         } catch (e) {
             service.fetchError = `Error parsing response: ${e.toString()}`
             postsModelObj.clear()

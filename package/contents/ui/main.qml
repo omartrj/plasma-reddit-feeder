@@ -32,12 +32,12 @@ PlasmoidItem {
     property alias currentSubreddit: apiBackend.currentSubreddit
     property alias currentSortOrder: apiBackend.currentSortOrder
     property alias postsModel: apiBackend.postsModel
-    signal dataRefreshed()
+    signal newDataAvailable()
 
     Connections {
         target: apiBackend
-        function onDataRefreshed() {
-            root.dataRefreshed()
+        function onNewDataAvailable() {
+            root.newDataAvailable()
         }
     }
 
@@ -46,7 +46,9 @@ PlasmoidItem {
         interval: root.refreshInterval * 60 * 1000
         running: true
         repeat: true
-        onTriggered: apiBackend.fetchAllSubreddits()
+        onTriggered: {
+            apiBackend.fetchAllSubreddits()
+        }
     }
 
     Component.onCompleted: {
@@ -55,7 +57,11 @@ PlasmoidItem {
 
     onExpandedChanged: {
         if (expanded) {
+            if (fullRepresentationItem && fullRepresentationItem.resetScroll) {
+                fullRepresentationItem.resetScroll()
+            }
             apiBackend.fetchAllSubreddits()
+            refreshTimer.restart()
         }
     }
 
@@ -69,13 +75,16 @@ PlasmoidItem {
 
     function fetchRedditData() {
         apiBackend.fetchRedditData()
+        refreshTimer.restart()
     }
 
     function loadCurrentSubredditFromCache() {
         apiBackend.loadCurrentSubredditFromCache()
+        refreshTimer.restart()
     }
 
 
     compactRepresentation: CompactRepresentation {}
-    fullRepresentation: FullRepresentation {}
+    fullRepresentation: FullRepresentation { id: fullRepLoader }
+    property variant fullRepresentationItem: fullRepLoader
 }
