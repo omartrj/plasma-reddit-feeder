@@ -20,5 +20,11 @@
     <entry name="showThumbnails" type="Bool">
       <default>true</default>
     </entry>
+    <entry name="titleFontSize" type="Int">
+      <default>10</default>
+    </entry>
+    <entry name="authorFontSize" type="Int">
+      <default>8</default>
+    </entry>
   </group>
 </kcfg>

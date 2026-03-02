@@ -16,6 +16,8 @@ Kirigami.FormLayout {
     property string cfg_iconStyle: "automatic"
     property alias cfg_refreshInterval: refreshIntervalField.value
     property alias cfg_showThumbnails: showThumbnailsField.checked
+    property alias cfg_titleFontSize: titleFontSizeField.value
+    property alias cfg_authorFontSize: authorFontSizeField.value
 
     onCfg_subredditChanged: updateModelFromText(cfg_subreddit)
 
@@ -165,5 +167,21 @@ Kirigami.FormLayout {
         id: showThumbnailsField
         Kirigami.FormData.label: "Thumbnails:"
         text: "Show images next to posts"
+    }
+
+    SpinBox {
+        id: titleFontSizeField
+        Kirigami.FormData.label: "Title Font Size:"
+        from: 6
+        to: 36
+        stepSize: 1
+    }
+
+    SpinBox {
+        id: authorFontSizeField
+        Kirigami.FormData.label: "Author Font Size:"
+        from: 6
+        to: 36
+        stepSize: 1
     }
 }

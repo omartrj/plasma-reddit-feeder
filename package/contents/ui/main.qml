@@ -12,6 +12,8 @@ PlasmoidItem {
     property string defaultSortOrder: Plasmoid.configuration.sortOrder
     property string iconStyle: Plasmoid.configuration.iconStyle
     property bool showThumbnails: Plasmoid.configuration.showThumbnails
+    property int titleFontSize: Plasmoid.configuration.titleFontSize
+    property int authorFontSize: Plasmoid.configuration.authorFontSize
 
     property bool isFetching: false
     property string fetchError: ""

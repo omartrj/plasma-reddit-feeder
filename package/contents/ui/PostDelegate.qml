@@ -26,6 +26,7 @@ Kirigami.AbstractCard {
             Label {
                 text: model.title
                 font.bold: true
+                font.pointSize: root.titleFontSize
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
             }
@@ -33,7 +34,7 @@ Kirigami.AbstractCard {
             Label {
                 text: "u/" + model.author
                 opacity: 0.7
-                font.pixelSize: Kirigami.Theme.smallFont.pixelSize
+                font.pointSize: root.authorFontSize
                 Layout.fillWidth: true
             }
         }
