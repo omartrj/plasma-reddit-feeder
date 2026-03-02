@@ -46,6 +46,7 @@ Item {
                             root.currentSubreddit = newlySelected
                             root.currentSortOrder = root.defaultSortOrder
                             root.loadCurrentSubredditFromCache()
+                            listView.positionViewAtBeginning()
                         }
                     }
                 }
@@ -78,6 +79,7 @@ Item {
                         onTriggered: {
                             root.currentSortOrder = "best"
                             root.fetchRedditData()
+                            listView.positionViewAtBeginning()
                         }
                     }
                     MenuItem {
@@ -88,6 +90,7 @@ Item {
                         onTriggered: {
                             root.currentSortOrder = "hot"
                             root.fetchRedditData()
+                            listView.positionViewAtBeginning()
                         }
                     }
                     MenuItem {
@@ -98,6 +101,7 @@ Item {
                         onTriggered: {
                             root.currentSortOrder = "new"
                             root.fetchRedditData()
+                            listView.positionViewAtBeginning()
                         }
                     }
                     MenuItem {
@@ -108,6 +112,7 @@ Item {
                         onTriggered: {
                             root.currentSortOrder = "top"
                             root.fetchRedditData()
+                            listView.positionViewAtBeginning()
                         }
                     }
                     MenuItem {
@@ -118,6 +123,7 @@ Item {
                         onTriggered: {
                             root.currentSortOrder = "rising"
                             root.fetchRedditData()
+                            listView.positionViewAtBeginning()
                         }
                     }
                 }
@@ -147,6 +153,7 @@ Item {
 
             ListView {
                 id: listView
+                
                 anchors.fill: parent
                 model: postsModel
                 clip: true

@@ -20,6 +20,7 @@ Item {
 
     // Outputs
     property alias postsModel: postsModelObj
+    signal dataRefreshed()
 
     ListModel {
         id: postsModelObj
@@ -98,6 +99,7 @@ Item {
             service.isFetching = false
             service.fetchError = ""
             processRedditResponse(service.redditCache[cacheKey], true)
+            service.dataRefreshed()
         } else {
             service.isFetching = true
             service.fetchError = ""
@@ -206,6 +208,7 @@ Item {
                     "flair_color": child.link_flair_background_color || ""
                 })
             }
+            service.dataRefreshed()
         } catch (e) {
             service.fetchError = `Error parsing response: ${e.toString()}`
             postsModelObj.clear()

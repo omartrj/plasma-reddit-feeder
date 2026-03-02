@@ -32,6 +32,14 @@ PlasmoidItem {
     property alias currentSubreddit: apiBackend.currentSubreddit
     property alias currentSortOrder: apiBackend.currentSortOrder
     property alias postsModel: apiBackend.postsModel
+    signal dataRefreshed()
+
+    Connections {
+        target: apiBackend
+        function onDataRefreshed() {
+            root.dataRefreshed()
+        }
+    }
 
     Timer {
         id: refreshTimer
