@@ -13,6 +13,8 @@
     </entry>
     <entry name="refreshInterval" type="Int">
       <default>15</default>
+      <min>5</min>
+      <max>60</max>
     </entry>
     <entry name="iconStyle" type="String">
       <default>colored</default>
@@ -22,9 +24,13 @@
     </entry>
     <entry name="titleFontSize" type="Int">
       <default>10</default>
+      <min>6</min>
+      <max>24</max>
     </entry>
     <entry name="authorFontSize" type="Int">
       <default>9</default>
+      <min>6</min>
+      <max>24</max>
     </entry>
     <entry name="showScore" type="Bool">
       <default>true</default>
