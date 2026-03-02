@@ -24,7 +24,7 @@
       <default>10</default>
     </entry>
     <entry name="authorFontSize" type="Int">
-      <default>8</default>
+      <default>9</default>
     </entry>
     <entry name="showScore" type="Bool">
       <default>true</default>
