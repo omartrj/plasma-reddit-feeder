@@ -161,20 +161,17 @@ Kirigami.AbstractCard {
         Item {
             visible: root.showThumbnails && model.thumbnail && model.thumbnail !== ""
             
-            // Adapt to the height of the text column to keep it proportional to the text
-            // Ensure minimum size for 1-line posts
-            // Ensure maximum size for excessively long posts
             readonly property real boundedSize: {
                 const textHeight = textColumn.implicitHeight;
-                const minSize = Kirigami.Units.iconSizes.huge;
-                const maxSize = Kirigami.Units.iconSizes.enormous;
+                const minSize = Kirigami.Units.gridUnit * 3;
+                const maxSize = Kirigami.Units.gridUnit * 5;
                 
                 return Math.min(maxSize, Math.max(minSize, textHeight));
             }
             
             Layout.preferredHeight: boundedSize
             Layout.preferredWidth: boundedSize
-            Layout.alignment: Qt.AlignTop
+            Layout.alignment: Qt.AlignVCenter
 
             Image {
                 anchors.fill: parent
