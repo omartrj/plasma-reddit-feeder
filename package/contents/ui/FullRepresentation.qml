@@ -23,6 +23,11 @@ Item {
                 Layout.fillWidth: true
                 clip: true
                 
+                currentIndex: {
+                    let idx = root.activeSubredditList ? root.activeSubredditList.indexOf(root.currentSubreddit) : -1;
+                    return idx >= 0 ? idx : 0;
+                }
+                
                 Repeater {
                     model: root.activeSubredditList
                     delegate: TabButton {
@@ -32,10 +37,13 @@ Item {
                 }
 
                 onCurrentIndexChanged: {
-                    if (currentIndex >= 0 && currentIndex < root.activeSubredditList.length) {
-                        root.currentSubreddit = root.activeSubredditList[currentIndex]
-                        root.currentSortOrder = root.defaultSortOrder
-                        root.fetchRedditData()
+                    if (root.activeSubredditList && currentIndex >= 0 && currentIndex < root.activeSubredditList.length) {
+                        let newlySelected = root.activeSubredditList[currentIndex]
+                        if (root.currentSubreddit !== newlySelected) {
+                            root.currentSubreddit = newlySelected
+                            root.currentSortOrder = root.defaultSortOrder
+                            root.fetchRedditData()
+                        }
                     }
                 }
             }

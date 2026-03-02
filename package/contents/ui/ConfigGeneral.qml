@@ -11,16 +11,9 @@ Kirigami.FormLayout {
 
     // Automatically bound config properties
     property string cfg_subreddit: ""
-    property string cfg_subredditDefault: ""
-    
     property string cfg_sortOrder: "hot"
-    property string cfg_sortOrderDefault: "hot"
-    
-    property int cfg_refreshInterval: 10
-    property int cfg_refreshIntervalDefault: 15
-    
     property string cfg_iconStyle: "automatic"
-    property string cfg_iconStyleDefault: "automatic"
+    property alias cfg_refreshInterval: refreshIntervalField.value
 
     onCfg_subredditChanged: updateModelFromText(cfg_subreddit)
 
@@ -30,9 +23,9 @@ Kirigami.FormLayout {
         if (updatingModel) return;
         updatingModel = true;
         subredditModel.clear();
-        var subs = text.split('+');
-        for (var i = 0; i < subs.length; i++) {
-            var subName = subs[i].trim();
+        let subs = text.split('+');
+        for (let i = 0; i < subs.length; i++) {
+            let subName = subs[i].trim();
             if (subName !== "") {
                 subredditModel.append({"name": subName});
             }
@@ -43,8 +36,8 @@ Kirigami.FormLayout {
     function updateTextFromModel() {
         if (updatingModel) return;
         updatingModel = true;
-        var subs = [];
-        for (var i = 0; i < subredditModel.count; i++) {
+        let subs = [];
+        for (let i = 0; i < subredditModel.count; i++) {
             subs.push(subredditModel.get(i).name);
         }
         page.cfg_subreddit = subs.join('+');
@@ -68,14 +61,7 @@ Kirigami.FormLayout {
             id: newSubredditField
             placeholderText: "e.g. kde"
             Layout.fillWidth: true
-            Keys.onReturnPressed: (event) => {
-                event.accepted = true
-                if (addButton.enabled) {
-                    addButton.clicked()
-                }
-            }
-            Keys.onEnterPressed: (event) => {
-                event.accepted = true
+            onAccepted: {
                 if (addButton.enabled) {
                     addButton.clicked()
                 }
@@ -90,7 +76,7 @@ Kirigami.FormLayout {
             onClicked: {
                 subredditModel.append({"name": newSubredditField.text.trim()})
                 newSubredditField.text = ""
-                updateTextFromModel()
+                page.updateTextFromModel()
             }
         }
     }
@@ -120,7 +106,7 @@ Kirigami.FormLayout {
                     display: AbstractButton.IconOnly
                     onClicked: {
                         subredditModel.remove(index)
-                        updateTextFromModel()
+                        page.updateTextFromModel()
                     }
                 }
             }
@@ -143,7 +129,10 @@ Kirigami.FormLayout {
         id: sortOrderField
         Kirigami.FormData.label: "Default Sort:"
         model: ["Hot", "New", "Top", "Rising", "Best"]
-        currentIndex: Math.max(0, ["hot", "new", "top", "rising", "best"].indexOf(page.cfg_sortOrder.toLowerCase()))
+        currentIndex: {
+            let idx = ["hot", "new", "top", "rising", "best"].indexOf(page.cfg_sortOrder.toLowerCase());
+            return idx >= 0 ? idx : 0;
+        }
         onActivated: {
             page.cfg_sortOrder = currentText.toLowerCase()
         }
@@ -155,17 +144,16 @@ Kirigami.FormLayout {
         from: 1
         to: 1440
         stepSize: 1
-        value: page.cfg_refreshInterval
-        onValueModified: {
-            page.cfg_refreshInterval = value
-        }
     }
 
     ComboBox {
         id: iconStyleField
         Kirigami.FormData.label: "Icon Style:"
         model: ["Automatic", "Colored", "Light", "Dark"]
-        currentIndex: Math.max(0, ["automatic", "colored", "light", "dark"].indexOf(page.cfg_iconStyle.toLowerCase()))
+        currentIndex: {
+            let idx = ["automatic", "colored", "light", "dark"].indexOf(page.cfg_iconStyle.toLowerCase());
+            return idx >= 0 ? idx : 0;
+        }
         onActivated: {
             page.cfg_iconStyle = currentText.toLowerCase()
         }

@@ -17,6 +17,7 @@ PlasmoidItem {
     property var activeSubredditList: []
     property string currentSubreddit: ""
     property string currentSortOrder: ""
+    property var currentRequest: null
 
     ListModel {
         id: postsModel
@@ -43,15 +44,7 @@ PlasmoidItem {
     }
     onRefreshIntervalChanged: refreshTimer.restart()
     function parseConfiguredSubreddits(subsString) {
-        var subs = subsString.split('+')
-        var parsedList = []
-        for (var i = 0; i < subs.length; i++) {
-            var sub = subs[i].trim()
-            if (sub !== "") {
-                parsedList.push(sub)
-            }
-        }
-        return parsedList
+        return subsString.split('+').map(s => s.trim()).filter(s => s !== "")
     }
 
     function updateSubredditList() {
@@ -76,40 +69,50 @@ PlasmoidItem {
             return
         }
 
+        if (root.currentRequest) {
+            root.currentRequest.abort()
+        }
+
         root.isFetching = true
         root.fetchError = ""
         postsModel.clear()
         
-        var xhr = new XMLHttpRequest()
-        var targetUrl = "https://www.reddit.com/r/" + root.currentSubreddit + "/" + (root.currentSortOrder || "hot") + ".json"
+        let xhr = new XMLHttpRequest()
+        root.currentRequest = xhr
+        let targetUrl = "https://www.reddit.com/r/" + root.currentSubreddit + "/" + (root.currentSortOrder || "hot") + ".json"
         
         xhr.open("GET", targetUrl)
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                var status = 0;
-                var text = "";
+                if (root.currentRequest === xhr) {
+                    root.currentRequest = null
+                }
+                
+                let status = 0;
+                let text = "";
                 try {
                     status = xhr.status;
                     text = xhr.responseText;
                 } catch (e) {
-                    // Component or backend network reply destroyed, safely ignore
                     return;
                 }
 
                 try {
+                    // Ignore aborted connections (status 0)
+                    if (status === 0) {
+                        return;
+                    }
                     root.isFetching = false
                     if (status === 200) {
                         processRedditResponse(text)
-                    } else if (status !== 0) { // Ignore aborted connections (status 0)
+                    } else {
                         root.fetchError = "Failed to fetch data (HTTP " + status + ")"
-                        postsModel.clear()
                     }
                 } catch (e) {
-                    // Root object might be destroyed
                 }
             }
         }
-        xhr.setRequestHeader("User-Agent", "plasma-reddit-feeder/1.1 (KDE Plasma 6)")
+        xhr.setRequestHeader("User-Agent", "plasma-reddit-feeder/1.2 (KDE Plasma 6)")
         xhr.send()
     }
 
@@ -125,20 +128,19 @@ PlasmoidItem {
 
     function processRedditResponse(responseText) {
         try {
-            var json = JSON.parse(responseText)
+            let json = JSON.parse(responseText)
             if (!json || !json.data || !json.data.children) {
                 root.fetchError = "Invalid data format received"
                 return
             }
 
-            postsModel.clear()
-            var posts = json.data.children
+            let posts = json.data.children
 
-            for (var i = 0; i < posts.length; i++) {
-                var child = posts[i].data
-                var permalink = "https://www.reddit.com" + child.permalink
+            for (let i = 0; i < posts.length; i++) {
+                let child = posts[i].data
+                let permalink = "https://www.reddit.com" + child.permalink
                 
-                var decodedTitle = decodeHtmlEntities(child.title);
+                let decodedTitle = decodeHtmlEntities(child.title);
 
                 postsModel.append({
                     "title": decodedTitle,
