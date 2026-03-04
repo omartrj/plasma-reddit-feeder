@@ -51,26 +51,13 @@ PlasmoidItem {
         }
     }
 
-    Component.onCompleted: {
-        apiBackend.updateSubredditList()
-    }
-
     onExpandedChanged: {
         if (expanded) {
-            if (fullRepresentationItem && fullRepresentationItem.resetScroll) {
-                fullRepresentationItem.resetScroll()
-            }
             apiBackend.fetchAllSubreddits()
             refreshTimer.restart()
         }
     }
 
-    onConfiguredSubredditsChanged: apiBackend.updateSubredditList()
-    onDefaultSortOrderChanged: {
-        if (apiBackend.currentSortOrder === "") {
-            apiBackend.currentSortOrder = root.defaultSortOrder
-        }
-    }
     onRefreshIntervalChanged: refreshTimer.restart()
 
     function fetchRedditData() {
@@ -85,6 +72,5 @@ PlasmoidItem {
 
 
     compactRepresentation: CompactRepresentation {}
-    fullRepresentation: FullRepresentation { id: fullRepLoader }
-    property variant fullRepresentationItem: fullRepLoader
+    fullRepresentation: FullRepresentation {}
 }

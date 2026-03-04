@@ -182,5 +182,10 @@ Item {
         function onNewDataAvailable() {
             fullRoot.resetScroll()
         }
+        function onExpandedChanged() {
+            if (root.expanded) {
+                fullRoot.resetScroll()
+            }
+        }
     }
 }
