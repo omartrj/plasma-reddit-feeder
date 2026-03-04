@@ -206,7 +206,14 @@ Item {
         }
 
         const cacheKey = `${service.currentSubreddit}_${service.currentSortOrder || "hot"}`
-        
+
+        // Cache-first with TTL: use cache if new (<5min), otherwise show stale cache while fetching new data
+        if (service.redditCache[cacheKey] && !isCacheStale(5)) {
+            processRedditResponse(service.redditCache[cacheKey], true)
+            return
+        }
+
+        // Cache stale or not present: show stale cache if exists, but fetch new data anyway
         if (service.redditCache[cacheKey]) {
             processRedditResponse(service.redditCache[cacheKey], true)
         } else {
