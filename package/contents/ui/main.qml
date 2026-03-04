@@ -61,6 +61,10 @@ PlasmoidItem {
         }
     }
 
+    function fetchAllSubreddits() {
+        apiBackend.fetchAllSubreddits()
+    }
+
     function fetchRedditData() {
         apiBackend.fetchRedditData()
     }

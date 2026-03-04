@@ -11,6 +11,25 @@ Item {
     Layout.preferredWidth: Kirigami.Units.gridUnit * 18
     Layout.minimumHeight: Kirigami.Units.gridUnit * 24
 
+    property int now: Math.floor(Date.now() / 1000)
+
+    Timer {
+        id: ageTimer
+        interval: 60000
+        repeat: true
+        running: true
+        onTriggered: fullRoot.now = Math.floor(Date.now() / 1000)
+    }
+
+    function ageText() {
+        if (root.isBackingOff) return "Rate limited — wait"
+        if (root.lastFetchTime === 0) return "Not yet updated"
+        const mins = Math.floor((fullRoot.now - root.lastFetchTime) / 60)
+        if (mins < 1) return "Updated just now"
+        if (mins === 1) return "Updated 1 min ago"
+        return `Updated ${mins} min ago`
+    }
+
     function resetScroll() {
         if (listView) {
             listView.positionViewAtBeginning()
@@ -131,6 +150,24 @@ Item {
                         }
                     }
                 }
+            }
+
+            ToolButton {
+                icon.name: "view-refresh"
+                display: AbstractButton.IconOnly
+                Layout.alignment: Qt.AlignVCenter
+                enabled: !root.isBackingOff && !root.isFetching
+                onClicked: root.fetchAllSubreddits()
+                ToolTip.text: fullRoot.ageText()
+                ToolTip.visible: hovered
+            }
+
+            Label {
+                text: fullRoot.ageText()
+                font.pointSize: Kirigami.Theme.smallFont.pointSize
+                color: Kirigami.Theme.disabledTextColor
+                Layout.alignment: Qt.AlignVCenter
+                visible: root.lastFetchTime !== 0 || root.isBackingOff
             }
 
             ToolButton {
