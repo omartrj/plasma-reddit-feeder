@@ -11,11 +11,6 @@
     <entry name="sortOrder" type="String">
       <default>hot</default>
     </entry>
-    <entry name="refreshInterval" type="Int">
-      <default>15</default>
-      <min>5</min>
-      <max>60</max>
-    </entry>
     <entry name="iconStyle" type="String">
       <default>colored</default>
     </entry>

@@ -9,7 +9,6 @@ PlasmoidItem {
     id: root
 
     property string configuredSubreddits: Plasmoid.configuration.subreddit
-    property int refreshInterval: Plasmoid.configuration.refreshInterval
     property string defaultSortOrder: Plasmoid.configuration.sortOrder
     property string iconStyle: Plasmoid.configuration.iconStyle
     property bool showThumbnails: Plasmoid.configuration.showThumbnails
@@ -40,17 +39,16 @@ PlasmoidItem {
         target: apiBackend
         function onNewDataAvailable() {
             root.newDataAvailable()
+            refreshTimer.restart()
         }
     }
 
     Timer {
         id: refreshTimer
-        interval: root.refreshInterval * 60 * 1000
+        interval: 15 * 60 * 1000
         running: true
         repeat: true
-        onTriggered: {
-            apiBackend.fetchAllSubreddits()
-        }
+        onTriggered: apiBackend.fetchAllSubreddits()
     }
 
     Component.onCompleted: {
@@ -63,16 +61,12 @@ PlasmoidItem {
         }
     }
 
-    onRefreshIntervalChanged: refreshTimer.restart()
-
     function fetchRedditData() {
         apiBackend.fetchRedditData()
-        refreshTimer.restart()
     }
 
     function loadCurrentSubredditFromCache() {
         apiBackend.loadCurrentSubredditFromCache()
-        refreshTimer.restart()
     }
 
 

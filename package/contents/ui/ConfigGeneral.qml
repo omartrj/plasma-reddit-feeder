@@ -13,7 +13,6 @@ Item {
     property string cfg_subreddit: ""
     property string cfg_subredditDefault: ""
     property string cfg_sortOrder: "hot"
-    property alias cfg_refreshInterval: refreshIntervalField.value
 
     onCfg_subredditChanged: updateModelFromText(cfg_subreddit)
 
@@ -202,14 +201,6 @@ Item {
                 onActivated: {
                     page.cfg_sortOrder = currentText.toLowerCase()
                 }
-            }
-
-            SpinBox {
-                id: refreshIntervalField
-                Kirigami.FormData.label: "Refresh Interval (minutes):"
-                from: 5
-                to: 60
-                stepSize: 1
             }
         }
     }
