@@ -252,7 +252,6 @@ Item {
                 service.backoffDelay = 0
                 service.isFetching = false
                 if (status === 200) {
-                    service.lastFetchTime = Math.floor(Date.now() / 1000)
                     service.redditCache[cacheKey] = text
                     processRedditResponse(text, false)
                 } else {
