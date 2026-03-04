@@ -11,6 +11,7 @@ Item {
     // State
     property bool isFetching: false
     property string fetchError: ""
+    property int lastFetchTime: 0
     property var activeSubredditList: []
     property string currentSubreddit: ""
     property string currentSortOrder: ""
@@ -31,6 +32,12 @@ Item {
         if (service.currentSortOrder === "") {
             service.currentSortOrder = service.defaultSortOrder
         }
+    }
+
+    function isCacheStale(maxAgeMinutes) {
+        if (service.lastFetchTime === 0) return true
+        const nowSecs = Math.floor(Date.now() / 1000)
+        return (nowSecs - service.lastFetchTime) > (maxAgeMinutes * 60)
     }
 
     function parseConfiguredSubreddits(subsString) {
@@ -88,6 +95,8 @@ Item {
                         
                         service.redditCache[cacheKey] = newText
                         
+                        service.lastFetchTime = Math.floor(Date.now() / 1000)
+
                         if (sub === service.currentSubreddit && sortMode === (service.currentSortOrder || "hot")) {
                             service.isFetching = false
                             service.fetchError = ""
@@ -180,6 +189,7 @@ Item {
                     }
                     service.isFetching = false
                     if (status === 200) {
+                        service.lastFetchTime = Math.floor(Date.now() / 1000)
                         service.redditCache[cacheKey] = text
                         processRedditResponse(text, false)
                     } else {
