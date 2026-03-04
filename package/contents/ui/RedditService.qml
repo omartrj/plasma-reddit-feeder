@@ -94,8 +94,6 @@ Item {
         } else {
             service.currentSubreddit = ""
         }
-        
-        fetchAllSubreddits()
     }
 
     function fetchAllSubreddits() {
