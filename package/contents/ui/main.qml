@@ -32,6 +32,7 @@ PlasmoidItem {
     property alias currentSortOrder: apiBackend.currentSortOrder
     property alias postsModel: apiBackend.postsModel
     property alias lastFetchTime: apiBackend.lastFetchTime
+    property alias currentFetchTime: apiBackend.currentFetchTime
     property alias isBackingOff: apiBackend.isBackingOff
     signal newDataAvailable()
 

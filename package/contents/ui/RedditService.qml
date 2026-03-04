@@ -12,6 +12,8 @@ Item {
     property bool isFetching: false
     property string fetchError: ""
     property int lastFetchTime: 0
+    property var fetchTimestamps: ({})
+    property int currentFetchTime: 0
     property bool isBackingOff: false
     property int backoffDelay: 0   // seconds, doubles on each 429 (cap: 600s)
     property var activeSubredditList: []
@@ -148,10 +150,13 @@ Item {
                     } catch (e) {}
                 }
 
+                const nowSecs = Math.floor(Date.now() / 1000)
                 service.redditCache[cacheKey] = newText
-                service.lastFetchTime = Math.floor(Date.now() / 1000)
+                service.lastFetchTime = nowSecs
+                service.fetchTimestamps = Object.assign({}, service.fetchTimestamps, { [cacheKey]: nowSecs })
 
                 if (sub === service.currentSubreddit && sortMode === (service.currentSortOrder || "hot")) {
+                    service.currentFetchTime = nowSecs
                     service.isFetching = false
                     service.fetchError = ""
                     processRedditResponse(newText, false)
@@ -185,6 +190,7 @@ Item {
         if (service.redditCache[cacheKey]) {
             service.isFetching = false
             service.fetchError = ""
+            service.currentFetchTime = service.fetchTimestamps[cacheKey] || 0
             processRedditResponse(service.redditCache[cacheKey], true)
         } else {
             service.isFetching = true
@@ -257,7 +263,11 @@ Item {
                 service.backoffDelay = 0
                 service.isFetching = false
                 if (status === 200) {
+                    const nowSecs = Math.floor(Date.now() / 1000)
                     service.redditCache[cacheKey] = text
+                    service.lastFetchTime = nowSecs
+                    service.fetchTimestamps = Object.assign({}, service.fetchTimestamps, { [cacheKey]: nowSecs })
+                    service.currentFetchTime = nowSecs
                     processRedditResponse(text, false)
                 } else {
                     service.fetchError = `Failed to fetch data (HTTP ${status})`

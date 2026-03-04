@@ -23,8 +23,8 @@ Item {
 
     function ageText() {
         if (root.isBackingOff) return "Rate limited — wait"
-        if (root.lastFetchTime === 0) return "Not yet updated"
-        const mins = Math.floor((fullRoot.now - root.lastFetchTime) / 60)
+        if (root.currentFetchTime === 0) return "Not yet updated"
+        const mins = Math.floor((fullRoot.now - root.currentFetchTime) / 60)
         if (mins < 1) return "Updated just now"
         if (mins === 1) return "Updated 1 min ago"
         return `Updated ${mins} min ago`
