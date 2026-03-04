@@ -16,8 +16,8 @@ Item {
     property string currentSubreddit: ""
     property string currentSortOrder: ""
     property var redditCache: ({})
-    property var activeBackgroundRequests: ({})
     property var currentRequest: null
+    property int staggerIndex: 0
 
     // Outputs
     property alias postsModel: postsModelObj
@@ -25,6 +25,13 @@ Item {
 
     ListModel {
         id: postsModelObj
+    }
+
+    Timer {
+        id: staggerTimer
+        interval: 2000
+        repeat: false
+        onTriggered: fetchNextStaggered()
     }
 
     onConfiguredSubredditsChanged: updateSubredditList()
@@ -60,61 +67,64 @@ Item {
 
     function fetchAllSubreddits() {
         if (!service.activeSubredditList?.length) return
-        
-        const sortMode = service.currentSortOrder || "hot"
-        
-        for (const sub of service.activeSubredditList) {
-            const cacheKey = `${sub}_${sortMode}`
-            
-            const bgXhr = new XMLHttpRequest()
-            service.activeBackgroundRequests[cacheKey] = bgXhr
-            
-            const targetUrl = `https://www.reddit.com/r/${sub}/${sortMode}.json`
-            
-            bgXhr.open("GET", targetUrl)
-            bgXhr.onreadystatechange = () => {
-                if (bgXhr.readyState === XMLHttpRequest.DONE) {
-                    if (bgXhr.status === 200) {
-                        const newText = bgXhr.responseText
-                        
-                        let isNewData = true
-                        if (service.redditCache[cacheKey]) {
-                            try {
-                                const oldJson = JSON.parse(service.redditCache[cacheKey])
-                                const newJson = JSON.parse(newText)
-                                const oldFirstId = oldJson?.data?.children?.[0]?.data?.id
-                                const newFirstId = newJson?.data?.children?.[0]?.data?.id
-                                
-                                if (oldFirstId && newFirstId && oldFirstId === newFirstId) {
-                                    isNewData = false
-                                }
-                            } catch (e) {
-                                // Fallback: if parsing fails, assume it's new data
-                            }
-                        }
-                        
-                        service.redditCache[cacheKey] = newText
-                        
-                        service.lastFetchTime = Math.floor(Date.now() / 1000)
+        staggerTimer.stop()
+        service.staggerIndex = 0
+        fetchNextStaggered()
+    }
 
-                        if (sub === service.currentSubreddit && sortMode === (service.currentSortOrder || "hot")) {
-                            service.isFetching = false
-                            service.fetchError = ""
-                            processRedditResponse(newText, false)
-                            // Notify the UI to scroll ONLY if the background fetch found a new topmost post
-                            if (isNewData) {
-                                service.newDataAvailable()
-                            }
+    function fetchNextStaggered() {
+        if (service.staggerIndex >= service.activeSubredditList.length) return
+
+        const sub = service.activeSubredditList[service.staggerIndex]
+        const sortMode = service.currentSortOrder || "hot"
+        const cacheKey = `${sub}_${sortMode}`
+        const targetUrl = `https://www.reddit.com/r/${sub}/${sortMode}.json`
+
+        console.log(`[reddit-feeder] [stagger ${service.staggerIndex + 1}/${service.activeSubredditList.length}] GET ${targetUrl}`)
+
+        const xhr = new XMLHttpRequest()
+        xhr.open("GET", targetUrl)
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState !== XMLHttpRequest.DONE) return
+
+            if (xhr.status === 200) {
+                const newText = xhr.responseText
+
+                let isNewData = true
+                if (service.redditCache[cacheKey]) {
+                    try {
+                        const oldJson = JSON.parse(service.redditCache[cacheKey])
+                        const newJson = JSON.parse(newText)
+                        const oldFirstId = oldJson?.data?.children?.[0]?.data?.id
+                        const newFirstId = newJson?.data?.children?.[0]?.data?.id
+                        if (oldFirstId && newFirstId && oldFirstId === newFirstId) {
+                            isNewData = false
                         }
-                    } else if (sub === service.currentSubreddit && sortMode === (service.currentSortOrder || "hot")) {
-                        service.isFetching = false
-                        service.fetchError = `Failed to fetch data (HTTP ${bgXhr.status})`
-                    }
-                    delete service.activeBackgroundRequests[cacheKey]
+                    } catch (e) {}
                 }
+
+                service.redditCache[cacheKey] = newText
+                service.lastFetchTime = Math.floor(Date.now() / 1000)
+
+                if (sub === service.currentSubreddit && sortMode === (service.currentSortOrder || "hot")) {
+                    service.isFetching = false
+                    service.fetchError = ""
+                    processRedditResponse(newText, false)
+                    if (isNewData) {
+                        service.newDataAvailable()
+                    }
+                }
+            } else if (sub === service.currentSubreddit && sortMode === (service.currentSortOrder || "hot")) {
+                service.isFetching = false
+                service.fetchError = `Failed to fetch data (HTTP ${xhr.status})`
             }
-            bgXhr.setRequestHeader("User-Agent", "plasma-reddit-feeder/1.2 (KDE Plasma 6)")
-            bgXhr.send()
+        }
+        xhr.setRequestHeader("User-Agent", "plasma-reddit-feeder/1.2 (KDE Plasma 6)")
+        xhr.send()
+
+        service.staggerIndex++
+        if (service.staggerIndex < service.activeSubredditList.length) {
+            staggerTimer.restart()
         }
     }
 
@@ -135,10 +145,7 @@ Item {
             service.isFetching = true
             service.fetchError = ""
             postsModelObj.clear()
-            
-            if (!service.activeBackgroundRequests[cacheKey]) {
-                fetchRedditData()
-            }
+            fetchRedditData()
         }
     }
 
