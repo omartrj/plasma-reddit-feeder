@@ -11,13 +11,14 @@ Item {
     // State
     property bool isFetching: false
     property string fetchError: ""
-    property int lastFetchTime: 0
+    property int lastFetchTime: 0   // global last-fetch timestamp for UI display
     property bool isBackingOff: false
     property int backoffDelay: 0   // seconds, doubles on each 429 (cap: 600s)
     property var activeSubredditList: []
     property string currentSubreddit: ""
     property string currentSortOrder: ""
     property var redditCache: ({})
+    property var redditCacheMeta: ({})   // per-cacheKey metadata, e.g. { fetchedAt: <unix secs> }
     property var currentRequest: null
     property int staggerIndex: 0
 
@@ -74,10 +75,18 @@ Item {
         console.log(`[reddit-feeder] [${source}] rate-limit — remaining: ${remaining}, used: ${used}, reset in: ${reset}s`)
     }
 
-    function isCacheStale(maxAgeMinutes) {
-        if (service.lastFetchTime === 0) return true
+    function isCacheStale(cacheKey, maxAgeMinutes) {
+        const meta = service.redditCacheMeta[cacheKey]
+        if (!meta || meta.fetchedAt === 0) return true
         const nowSecs = Math.floor(Date.now() / 1000)
-        return (nowSecs - service.lastFetchTime) > (maxAgeMinutes * 60)
+        return (nowSecs - meta.fetchedAt) > (maxAgeMinutes * 60)
+    }
+
+    function stampCacheFetch(cacheKey) {
+        const nowSecs = Math.floor(Date.now() / 1000)
+        if (!service.redditCacheMeta[cacheKey]) service.redditCacheMeta[cacheKey] = {}
+        service.redditCacheMeta[cacheKey].fetchedAt = nowSecs
+        service.lastFetchTime = nowSecs
     }
 
     function parseConfiguredSubreddits(subsString) {
@@ -149,7 +158,7 @@ Item {
                 }
 
                 service.redditCache[cacheKey] = newText
-                service.lastFetchTime = Math.floor(Date.now() / 1000)
+                stampCacheFetch(cacheKey)
 
                 if (sub === service.currentSubreddit && sortMode === (service.currentSortOrder || "hot")) {
                     service.isFetching = false
@@ -208,7 +217,7 @@ Item {
         const cacheKey = `${service.currentSubreddit}_${service.currentSortOrder || "hot"}`
 
         // Cache-first with TTL: use cache if new (<5min), otherwise show stale cache while fetching new data
-        if (service.redditCache[cacheKey] && !isCacheStale(5)) {
+        if (service.redditCache[cacheKey] && !isCacheStale(cacheKey, 5)) {
             processRedditResponse(service.redditCache[cacheKey], true)
             return
         }
@@ -258,6 +267,7 @@ Item {
                 service.isFetching = false
                 if (status === 200) {
                     service.redditCache[cacheKey] = text
+                    stampCacheFetch(cacheKey)
                     processRedditResponse(text, false)
                 } else {
                     service.fetchError = `Failed to fetch data (HTTP ${status})`
