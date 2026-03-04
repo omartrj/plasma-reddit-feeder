@@ -32,6 +32,8 @@ PlasmoidItem {
     property alias currentSubreddit: apiBackend.currentSubreddit
     property alias currentSortOrder: apiBackend.currentSortOrder
     property alias postsModel: apiBackend.postsModel
+    property alias lastFetchTime: apiBackend.lastFetchTime
+    property alias isBackingOff: apiBackend.isBackingOff
     signal newDataAvailable()
 
     Connections {
@@ -51,10 +53,13 @@ PlasmoidItem {
         }
     }
 
+    Component.onCompleted: {
+        apiBackend.fetchAllSubreddits()
+    }
+
     onExpandedChanged: {
-        if (expanded) {
+        if (expanded && apiBackend.isCacheStale(5)) {
             apiBackend.fetchAllSubreddits()
-            refreshTimer.restart()
         }
     }
 
