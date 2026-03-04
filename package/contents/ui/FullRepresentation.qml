@@ -153,24 +153,6 @@ Item {
             }
 
             ToolButton {
-                icon.name: "view-refresh"
-                display: AbstractButton.IconOnly
-                Layout.alignment: Qt.AlignVCenter
-                enabled: !root.isBackingOff && !root.isFetching
-                onClicked: root.fetchAllSubreddits()
-                ToolTip.text: fullRoot.ageText()
-                ToolTip.visible: hovered
-            }
-
-            Label {
-                text: fullRoot.ageText()
-                font.pointSize: Kirigami.Theme.smallFont.pointSize
-                color: Kirigami.Theme.disabledTextColor
-                Layout.alignment: Qt.AlignVCenter
-                visible: root.lastFetchTime !== 0 || root.isBackingOff
-            }
-
-            ToolButton {
                 icon.name: "window-pin"
                 display: AbstractButton.IconOnly
                 Layout.alignment: Qt.AlignVCenter
@@ -210,6 +192,32 @@ Item {
                 visible: postsModel.count === 0
                 text: root.isFetching ? "Loading Posts..." : (root.fetchError !== "" ? root.fetchError : "No posts found")
                 icon.name: root.isFetching ? "view-refresh" : (root.fetchError !== "" ? "network-disconnect" : "application-rss+xml")
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Kirigami.Units.smallSpacing
+            Layout.topMargin: 2
+            Layout.bottomMargin: 2
+
+            ToolButton {
+                icon.name: "view-refresh"
+                icon.width: Kirigami.Units.iconSizes.small
+                icon.height: Kirigami.Units.iconSizes.small
+                display: AbstractButton.IconOnly
+                flat: true
+                enabled: !root.isBackingOff && !root.isFetching
+                onClicked: root.fetchAllSubreddits()
+                ToolTip.text: "Refresh now"
+                ToolTip.visible: hovered
+            }
+
+            Label {
+                text: fullRoot.ageText()
+                font.pointSize: Kirigami.Theme.smallFont.pointSize
+                color: Kirigami.Theme.disabledTextColor
+                Layout.fillWidth: true
             }
         }
     }
