@@ -12,6 +12,8 @@ Item {
     property bool isFetching: false
     property string fetchError: ""
     property int lastFetchTime: 0
+    property bool isBackingOff: false
+    property int backoffDelay: 0   // seconds, doubles on each 429 (cap: 600s)
     property var activeSubredditList: []
     property string currentSubreddit: ""
     property string currentSortOrder: ""
@@ -34,11 +36,42 @@ Item {
         onTriggered: fetchNextStaggered()
     }
 
+    Timer {
+        id: backoffTimer
+        repeat: false
+        onTriggered: {
+            service.isBackingOff = false
+            console.log("[reddit-feeder] backoff expired, retrying fetch")
+            fetchAllSubreddits()
+        }
+    }
+
     onConfiguredSubredditsChanged: updateSubredditList()
     onDefaultSortOrderChanged: {
         if (service.currentSortOrder === "") {
             service.currentSortOrder = service.defaultSortOrder
         }
+    }
+
+    function handleBackoff(resetHeader) {
+        staggerTimer.stop()
+        const resetSecs = parseInt(resetHeader) || 60
+        const delaySecs = service.backoffDelay === 0
+            ? resetSecs
+            : Math.min(service.backoffDelay * 2, 600)
+        service.backoffDelay = delaySecs
+        service.isBackingOff = true
+        service.fetchError = `Rate limited. Retrying in ${delaySecs}s`
+        console.log(`[reddit-feeder] 429 received — backoff ${delaySecs}s`)
+        backoffTimer.interval = delaySecs * 1000
+        backoffTimer.restart()
+    }
+
+    function logRateLimit(xhr, source) {
+        const remaining = xhr.getResponseHeader("x-ratelimit-remaining")
+        const used      = xhr.getResponseHeader("x-ratelimit-used")
+        const reset     = xhr.getResponseHeader("x-ratelimit-reset")
+        console.log(`[reddit-feeder] [${source}] rate-limit — remaining: ${remaining}, used: ${used}, reset in: ${reset}s`)
     }
 
     function isCacheStale(maxAgeMinutes) {
@@ -67,6 +100,10 @@ Item {
 
     function fetchAllSubreddits() {
         if (!service.activeSubredditList?.length) return
+        if (service.isBackingOff) {
+            console.log("[reddit-feeder] fetchAllSubreddits blocked: backoff active")
+            return
+        }
         staggerTimer.stop()
         service.staggerIndex = 0
         fetchNextStaggered()
@@ -86,6 +123,16 @@ Item {
         xhr.open("GET", targetUrl)
         xhr.onreadystatechange = () => {
             if (xhr.readyState !== XMLHttpRequest.DONE) return
+
+            logRateLimit(xhr, `stagger r/${sub}`)
+
+            if (xhr.status === 429) {
+                handleBackoff(xhr.getResponseHeader("x-ratelimit-reset"))
+                return
+            }
+
+            // Successful response: reset backoff
+            service.backoffDelay = 0
 
             if (xhr.status === 200) {
                 const newText = xhr.responseText
@@ -155,6 +202,10 @@ Item {
             service.fetchError = "No subreddits configured"
             return
         }
+        if (service.isBackingOff) {
+            console.log("[reddit-feeder] fetchRedditData blocked: backoff active")
+            return
+        }
 
         const cacheKey = `${service.currentSubreddit}_${service.currentSortOrder || "hot"}`
         
@@ -180,29 +231,32 @@ Item {
                 if (service.currentRequest === xhr) {
                     service.currentRequest = null
                 }
-                
+
                 let status = 0;
                 let text = "";
                 try {
                     status = xhr.status;
                     text = xhr.responseText;
+                    logRateLimit(xhr, `fetchRedditData r/${service.currentSubreddit}`)
                 } catch (e) {
                     return;
                 }
 
-                try {
-                    if (status === 0) {
-                        return;
-                    }
-                    service.isFetching = false
-                    if (status === 200) {
-                        service.lastFetchTime = Math.floor(Date.now() / 1000)
-                        service.redditCache[cacheKey] = text
-                        processRedditResponse(text, false)
-                    } else {
-                        service.fetchError = `Failed to fetch data (HTTP ${status})`
-                    }
-                } catch (e) {
+                if (status === 0) return;
+
+                if (status === 429) {
+                    handleBackoff(xhr.getResponseHeader("x-ratelimit-reset"))
+                    return;
+                }
+
+                service.backoffDelay = 0
+                service.isFetching = false
+                if (status === 200) {
+                    service.lastFetchTime = Math.floor(Date.now() / 1000)
+                    service.redditCache[cacheKey] = text
+                    processRedditResponse(text, false)
+                } else {
+                    service.fetchError = `Failed to fetch data (HTTP ${status})`
                 }
             }
         }
