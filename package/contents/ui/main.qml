@@ -51,10 +51,6 @@ PlasmoidItem {
         onTriggered: apiBackend.fetchAllSubreddits()
     }
 
-    Component.onCompleted: {
-        apiBackend.fetchAllSubreddits()
-    }
-
     onExpandedChanged: {
         if (expanded && apiBackend.isCacheStale(5)) {
             apiBackend.fetchAllSubreddits()
