@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="package/contents/images/icon.svg" width="64" />
+  <img src="package/contents/assets/icon.svg" width="64" />
   <h1>Reddit Feeder</h1>
 
   <p>
