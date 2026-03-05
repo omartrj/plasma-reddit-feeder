@@ -4,7 +4,7 @@ import QtQuick.Controls
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
-import "Constants.js" as C
+import "../Constants.js" as C
 
 Item {
     id: fullRoot

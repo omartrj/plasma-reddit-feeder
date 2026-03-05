@@ -2,7 +2,7 @@
 
 // --- General ---
 const APP_NAME   = "Reddit Feeder"
-const APP_ID     = "org.kde.plasma.redditfeeder"
+const APP_ID     = "com.github.omartrj.redditfeeder"
 const APP_AUTHOR = "Omar Criacci"
 
 // --- Timing ---

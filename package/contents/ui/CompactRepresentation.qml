@@ -11,12 +11,12 @@ Item {
         anchors.fill: parent
         
         source: {
-            if (root.iconStyle === "colored") return Qt.resolvedUrl("../images/icon.svg")
-            if (root.iconStyle === "light") return Qt.resolvedUrl("../images/icon-light.svg")
-            if (root.iconStyle === "dark") return Qt.resolvedUrl("../images/icon-dark.svg")
+            if (root.iconStyle === "colored") return Qt.resolvedUrl("../assets/icon.svg")
+            if (root.iconStyle === "light") return Qt.resolvedUrl("../assets/icon-light.svg")
+            if (root.iconStyle === "dark") return Qt.resolvedUrl("../assets/icon-dark.svg")
             
             // Fallback to colored
-            return Qt.resolvedUrl("../images/icon.svg") 
+            return Qt.resolvedUrl("../assets/icon.svg") 
         }
     }
 
