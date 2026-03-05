@@ -9,7 +9,6 @@ PlasmoidItem {
     id: root
 
     property string configuredSubreddits: Plasmoid.configuration.subreddit
-    property int refreshInterval: Plasmoid.configuration.refreshInterval
     property string defaultSortOrder: Plasmoid.configuration.sortOrder
     property string iconStyle: Plasmoid.configuration.iconStyle
     property bool showThumbnails: Plasmoid.configuration.showThumbnails
@@ -32,59 +31,52 @@ PlasmoidItem {
     property alias currentSubreddit: apiBackend.currentSubreddit
     property alias currentSortOrder: apiBackend.currentSortOrder
     property alias postsModel: apiBackend.postsModel
+    property alias lastFetchTime: apiBackend.lastFetchTime
+    property alias isBackingOff: apiBackend.isBackingOff
     signal newDataAvailable()
 
     Connections {
         target: apiBackend
         function onNewDataAvailable() {
             root.newDataAvailable()
+            refreshTimer.restart()
         }
     }
 
     Timer {
         id: refreshTimer
-        interval: root.refreshInterval * 60 * 1000
+        interval: 15 * 60 * 1000
         running: true
         repeat: true
-        onTriggered: {
-            apiBackend.fetchAllSubreddits()
-        }
+        onTriggered: apiBackend.fetchAllSubreddits()
     }
 
     Component.onCompleted: {
-        apiBackend.updateSubredditList()
+        apiBackend.fetchAllSubreddits()
     }
 
     onExpandedChanged: {
         if (expanded) {
-            if (fullRepresentationItem && fullRepresentationItem.resetScroll) {
-                fullRepresentationItem.resetScroll()
+            const cacheKey = `${apiBackend.currentSubreddit}_${apiBackend.currentSortOrder || "hot"}`
+            if (apiBackend.isCacheStale(cacheKey, 5)) {
+                apiBackend.fetchAllSubreddits()
             }
-            apiBackend.fetchAllSubreddits()
-            refreshTimer.restart()
         }
     }
 
-    onConfiguredSubredditsChanged: apiBackend.updateSubredditList()
-    onDefaultSortOrderChanged: {
-        if (apiBackend.currentSortOrder === "") {
-            apiBackend.currentSortOrder = root.defaultSortOrder
-        }
+    function fetchAllSubreddits() {
+        apiBackend.fetchAllSubreddits()
     }
-    onRefreshIntervalChanged: refreshTimer.restart()
 
     function fetchRedditData() {
         apiBackend.fetchRedditData()
-        refreshTimer.restart()
     }
 
     function loadCurrentSubredditFromCache() {
         apiBackend.loadCurrentSubredditFromCache()
-        refreshTimer.restart()
     }
 
 
     compactRepresentation: CompactRepresentation {}
-    fullRepresentation: FullRepresentation { id: fullRepLoader }
-    property variant fullRepresentationItem: fullRepLoader
+    fullRepresentation: FullRepresentation {}
 }

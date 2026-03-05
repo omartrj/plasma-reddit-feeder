@@ -11,6 +11,25 @@ Item {
     Layout.preferredWidth: Kirigami.Units.gridUnit * 18
     Layout.minimumHeight: Kirigami.Units.gridUnit * 24
 
+    property int now: Math.floor(Date.now() / 1000)
+
+    Timer {
+        id: ageTimer
+        interval: 60000
+        repeat: true
+        running: true
+        onTriggered: fullRoot.now = Math.floor(Date.now() / 1000)
+    }
+
+    function ageText() {
+        if (root.isBackingOff) return "Rate limited — wait"
+        if (root.lastFetchTime === 0) return "Not yet updated"
+        const mins = Math.floor((fullRoot.now - root.lastFetchTime) / 60)
+        if (mins < 1) return "Updated just now"
+        if (mins === 1) return "Updated 1 min ago"
+        return `Updated ${mins} min ago`
+    }
+
     function resetScroll() {
         if (listView) {
             listView.positionViewAtBeginning()
@@ -175,12 +194,43 @@ Item {
                 icon.name: root.isFetching ? "view-refresh" : (root.fetchError !== "" ? "network-disconnect" : "application-rss+xml")
             }
         }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Kirigami.Units.smallSpacing
+            Layout.topMargin: 2
+            Layout.bottomMargin: 2
+
+            ToolButton {
+                icon.name: "view-refresh"
+                icon.width: Kirigami.Units.iconSizes.small
+                icon.height: Kirigami.Units.iconSizes.small
+                display: AbstractButton.IconOnly
+                flat: true
+                enabled: !root.isBackingOff && !root.isFetching
+                onClicked: root.fetchAllSubreddits()
+                ToolTip.text: "Refresh now"
+                ToolTip.visible: hovered
+            }
+
+            Label {
+                text: fullRoot.ageText()
+                font.pointSize: Kirigami.Theme.smallFont.pointSize
+                color: Kirigami.Theme.disabledTextColor
+                Layout.fillWidth: true
+            }
+        }
     }
 
     Connections {
         target: root
         function onNewDataAvailable() {
             fullRoot.resetScroll()
+        }
+        function onExpandedChanged() {
+            if (root.expanded) {
+                fullRoot.resetScroll()
+            }
         }
     }
 }
