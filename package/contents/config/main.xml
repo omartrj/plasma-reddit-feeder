@@ -39,6 +39,9 @@
     <entry name="showTags" type="Bool">
       <default>true</default>
     </entry>
+    <entry name="blurNsfw" type="Bool">
+      <default>true</default>
+    </entry>
     <entry name="showDate" type="Bool">
       <default>true</default>
     </entry>

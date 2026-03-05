@@ -180,7 +180,7 @@ Kirigami.AbstractCard {
                 fillMode: Image.PreserveAspectCrop
                 asynchronous: true
                 // "Blur" effect by heavily reducing opacity if it's sensitive content
-                opacity: (root.showTags && (model.over_18 || model.spoiler)) ? C.THUMBNAIL_OPACITY_SENSITIVE : 1.0
+                opacity: (root.blurNsfw && model.over_18) ? C.THUMBNAIL_OPACITY_SENSITIVE : 1.0
                 
                 Behavior on opacity {
                     NumberAnimation { duration: Kirigami.Units.shortDuration }
@@ -193,7 +193,7 @@ Kirigami.AbstractCard {
                 width: Kirigami.Units.iconSizes.large
                 height: width
                 source: C.ICON_HIDDEN
-                visible: root.showTags && (model.over_18 || model.spoiler)
+                visible: root.blurNsfw && model.over_18
                 opacity: C.OPACITY_MUTED
             }
         }

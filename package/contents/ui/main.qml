@@ -20,6 +20,7 @@ PlasmoidItem {
     property bool showComments: Plasmoid.configuration.showComments
     property bool showFlairs: Plasmoid.configuration.showFlairs
     property bool showTags: Plasmoid.configuration.showTags
+    property bool blurNsfw: Plasmoid.configuration.blurNsfw
     property bool showDate: Plasmoid.configuration.showDate
     RedditService {
         id: apiBackend

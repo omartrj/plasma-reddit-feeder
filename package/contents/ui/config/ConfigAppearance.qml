@@ -17,6 +17,7 @@ Item {
     property alias cfg_showComments: showCommentsField.checked
     property alias cfg_showFlairs: showFlairsField.checked
     property alias cfg_showTags: showTagsField.checked
+    property alias cfg_blurNsfw: blurNsfwField.checked
     property alias cfg_showDate: showDateField.checked
     property alias cfg_titleFontSize: titleFontSizeField.value
     property alias cfg_authorFontSize: authorFontSizeField.value
@@ -69,7 +70,13 @@ Item {
             CheckBox {
                 id: showTagsField
                 Kirigami.FormData.label: "Tags:"
-                text: "Blur NSFW/Spoiler content"
+                text: "Show NSFW/Spoiler tags"
+            }
+
+            CheckBox {
+                id: blurNsfwField
+                Kirigami.FormData.label: "Blur NSFW:"
+                text: "Blur NSFW/Spoiler thumbnails"
             }
 
             CheckBox {
