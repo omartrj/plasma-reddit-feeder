@@ -1,10 +1,5 @@
 .pragma library
 
-// --- General ---
-const APP_NAME   = "Reddit Feeder"
-const APP_ID     = "com.github.omartrj.redditfeeder"
-const APP_AUTHOR = "Omar Criacci"
-
 // --- Timing ---
 const BACKGROUND_REFRESH_INTERVAL_MS = 15 * 60 * 1000   // background timer between full refreshes
 const STAGGER_DELAY_MS               = 2000             // delay between staggered sub fetches
