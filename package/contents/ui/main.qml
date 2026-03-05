@@ -56,8 +56,11 @@ PlasmoidItem {
     }
 
     onExpandedChanged: {
-        if (expanded && apiBackend.isCacheStale(5)) {
-            apiBackend.fetchAllSubreddits()
+        if (expanded) {
+            const cacheKey = `${apiBackend.currentSubreddit}_${apiBackend.currentSortOrder || "hot"}`
+            if (apiBackend.isCacheStale(cacheKey, 5)) {
+                apiBackend.fetchAllSubreddits()
+            }
         }
     }
 

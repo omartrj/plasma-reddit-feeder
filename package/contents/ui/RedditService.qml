@@ -196,6 +196,7 @@ Item {
         if (service.redditCache[cacheKey]) {
             service.isFetching = false
             service.fetchError = ""
+            service.lastFetchTime = service.redditCacheMeta[cacheKey]?.fetchedAt ?? 0
             processRedditResponse(service.redditCache[cacheKey], true)
         } else {
             service.isFetching = true
@@ -220,12 +221,14 @@ Item {
 
         // Cache-first with TTL: use cache if new (<5min), otherwise show stale cache while fetching new data
         if (service.redditCache[cacheKey] && !isCacheStale(cacheKey, 5)) {
+            service.lastFetchTime = service.redditCacheMeta[cacheKey]?.fetchedAt ?? 0
             processRedditResponse(service.redditCache[cacheKey], true)
             return
         }
 
         // Cache stale or not present: show stale cache if exists, but fetch new data anyway
         if (service.redditCache[cacheKey]) {
+            service.lastFetchTime = service.redditCacheMeta[cacheKey]?.fetchedAt ?? 0
             processRedditResponse(service.redditCache[cacheKey], true)
         } else {
             service.isFetching = true
