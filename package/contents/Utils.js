@@ -34,3 +34,14 @@ function formatNumberShort(num) {
 function getLuminance(r, g, b) {
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
+
+function iconInstallCommand(iconSrcPath) {
+    const iconName = "redditfeeder-plasmoid"
+    const dest = "$HOME/.local/share/icons/hicolor/scalable/apps"
+    return [
+        `mkdir -p '${dest}'`,
+        `[ -f '${iconSrcPath}' ]`,
+        `cp '${iconSrcPath}' '${dest}/${iconName}.svg'`,
+        `touch '${dest}/..'`
+    ].join(" && ")
+}

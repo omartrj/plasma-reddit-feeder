@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import org.kde.plasma.plasmoid
+import org.kde.plasma.plasma5support as PlasmaSupport
 import org.kde.kirigami as Kirigami
 import "../Utils.js" as Utils
 import "../Constants.js" as C
@@ -36,6 +37,13 @@ PlasmoidItem {
     property alias isBackingOff: apiBackend.isBackingOff
     signal newDataAvailable()
 
+    PlasmaSupport.DataSource {
+        id: runner
+        engine: "executable"
+        connectedSources: []
+        onNewData: (source, _data) => disconnectSource(source)
+    }
+
     Connections {
         target: apiBackend
         function onNewDataAvailable() {
@@ -53,6 +61,8 @@ PlasmoidItem {
     }
 
     Component.onCompleted: {
+        const iconSrc = decodeURIComponent(Qt.resolvedUrl("../assets/icon.svg").toString().replace("file://", ""))
+        runner.connectSource(Utils.iconInstallCommand(iconSrc))
         apiBackend.fetchAllSubreddits()
     }
 
