@@ -41,7 +41,6 @@ function iconInstallCommand(iconSrcPath) {
     return [
         `mkdir -p "${dest}"`,
         `[ -f '${iconSrcPath}' ]`,
-        `cp '${iconSrcPath}' "${dest}/${iconName}.svg"`,
-        `touch "${dest}/.."`
+        `cp '${iconSrcPath}' "${dest}/${iconName}.svg"`
     ].join(" && ")
 }
