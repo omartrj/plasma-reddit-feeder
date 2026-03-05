@@ -19,7 +19,6 @@ Keep up with your favorite subreddits right from your desktop, fast and distract
 - **Thumbnail Previews**: See post thumbnails directly in the feed for a more visual browsing experience.
 - **Highly Customizable**: Choose yourself what post details to show, such as author, upvotes, comments, tags and spoiler/NSFW indicators.
 - **Dynamic Sorting**: Filter posts on the fly by Hot, New, Top, Best or Rising with a convenient dropdown menu.
-- **Auto-Refresh**: Configure a custom background refresh interval to ensure your feed is always up to date.
 
 ![Desktop Mode](/assets/desktop.png)
 
