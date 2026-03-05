@@ -39,9 +39,9 @@ function iconInstallCommand(iconSrcPath) {
     const iconName = "redditfeeder-plasmoid"
     const dest = "$HOME/.local/share/icons/hicolor/scalable/apps"
     return [
-        `mkdir -p '${dest}'`,
+        `mkdir -p "${dest}"`,
         `[ -f '${iconSrcPath}' ]`,
-        `cp '${iconSrcPath}' '${dest}/${iconName}.svg'`,
-        `touch '${dest}/..'`
+        `cp '${iconSrcPath}' "${dest}/${iconName}.svg"`,
+        `touch "${dest}/.."`
     ].join(" && ")
 }
