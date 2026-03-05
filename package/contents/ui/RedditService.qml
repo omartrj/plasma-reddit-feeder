@@ -11,13 +11,14 @@ Item {
     // State
     property bool isFetching: false
     property string fetchError: ""
-    property int lastFetchTime: 0
+    property int lastFetchTime: 0   // fetch time for currently displayed subreddit (for UI)
     property bool isBackingOff: false
     property int backoffDelay: 0   // seconds, doubles on each 429 (cap: 600s)
     property var activeSubredditList: []
     property string currentSubreddit: ""
     property string currentSortOrder: ""
     property var redditCache: ({})
+    property var redditCacheMeta: ({})   // per-cacheKey metadata: { fetchedAt: int }
     property var currentRequest: null
     property int staggerIndex: 0
 
@@ -55,6 +56,7 @@ Item {
 
     function handleBackoff(resetHeader) {
         staggerTimer.stop()
+        service.isFetching = false
         const resetSecs = parseInt(resetHeader) || 60
         const delaySecs = service.backoffDelay === 0
             ? resetSecs
@@ -74,10 +76,11 @@ Item {
         console.log(`[reddit-feeder] [${source}] rate-limit — remaining: ${remaining}, used: ${used}, reset in: ${reset}s`)
     }
 
-    function isCacheStale(maxAgeMinutes) {
-        if (service.lastFetchTime === 0) return true
+    function isCacheStale(cacheKey, maxAgeMinutes) {
+        const fetchedAt = service.redditCacheMeta[cacheKey]?.fetchedAt ?? 0
+        if (fetchedAt === 0) return true
         const nowSecs = Math.floor(Date.now() / 1000)
-        return (nowSecs - service.lastFetchTime) > (maxAgeMinutes * 60)
+        return (nowSecs - fetchedAt) > (maxAgeMinutes * 60)
     }
 
     function parseConfiguredSubreddits(subsString) {
@@ -97,7 +100,11 @@ Item {
     }
 
     function fetchAllSubreddits() {
-        if (!service.activeSubredditList?.length) return
+        if (!service.activeSubredditList?.length) {
+            postsModelObj.clear()
+            service.fetchError = "No subreddits configured"
+            return
+        }
         if (service.isBackingOff) {
             console.log("[reddit-feeder] fetchAllSubreddits blocked: backoff active")
             return
@@ -116,6 +123,8 @@ Item {
         const targetUrl = `https://www.reddit.com/r/${sub}/${sortMode}.json`
 
         console.log(`[reddit-feeder] [stagger ${service.staggerIndex + 1}/${service.activeSubredditList.length}] GET ${targetUrl}`)
+
+        service.staggerIndex++
 
         const xhr = new XMLHttpRequest()
         xhr.open("GET", targetUrl)
@@ -149,9 +158,11 @@ Item {
                 }
 
                 service.redditCache[cacheKey] = newText
-                service.lastFetchTime = Math.floor(Date.now() / 1000)
+                const nowSecs = Math.floor(Date.now() / 1000)
+                service.redditCacheMeta[cacheKey] = { fetchedAt: nowSecs }
 
                 if (sub === service.currentSubreddit && sortMode === (service.currentSortOrder || "hot")) {
+                    service.lastFetchTime = nowSecs
                     service.isFetching = false
                     service.fetchError = ""
                     processRedditResponse(newText, false)
@@ -163,14 +174,14 @@ Item {
                 service.isFetching = false
                 service.fetchError = `Failed to fetch data (HTTP ${xhr.status})`
             }
+
+            // Schedule next stagger only after current XHR completes
+            if (service.staggerIndex < service.activeSubredditList.length && !service.isBackingOff) {
+                staggerTimer.restart()
+            }
         }
         xhr.setRequestHeader("User-Agent", "plasma-reddit-feeder/1.2 (KDE Plasma 6)")
         xhr.send()
-
-        service.staggerIndex++
-        if (service.staggerIndex < service.activeSubredditList.length) {
-            staggerTimer.restart()
-        }
     }
 
     function loadCurrentSubredditFromCache() {
@@ -208,7 +219,7 @@ Item {
         const cacheKey = `${service.currentSubreddit}_${service.currentSortOrder || "hot"}`
 
         // Cache-first with TTL: use cache if new (<5min), otherwise show stale cache while fetching new data
-        if (service.redditCache[cacheKey] && !isCacheStale(5)) {
+        if (service.redditCache[cacheKey] && !isCacheStale(cacheKey, 5)) {
             processRedditResponse(service.redditCache[cacheKey], true)
             return
         }
@@ -257,7 +268,10 @@ Item {
                 service.backoffDelay = 0
                 service.isFetching = false
                 if (status === 200) {
+                    const nowSecs = Math.floor(Date.now() / 1000)
                     service.redditCache[cacheKey] = text
+                    service.redditCacheMeta[cacheKey] = { fetchedAt: nowSecs }
+                    service.lastFetchTime = nowSecs
                     processRedditResponse(text, false)
                 } else {
                     service.fetchError = `Failed to fetch data (HTTP ${status})`
