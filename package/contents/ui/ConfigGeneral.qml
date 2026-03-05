@@ -2,11 +2,12 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import "Constants.js" as C
 
 Item {
     id: page
-    implicitWidth: Kirigami.Units.gridUnit * 25
-    implicitHeight: Kirigami.Units.gridUnit * 35
+    implicitWidth: Kirigami.Units.gridUnit * C.CONFIG_PAGE_WIDTH_GU
+    implicitHeight: Kirigami.Units.gridUnit * C.CONFIG_PAGE_HEIGHT_GU
     
     property string title: "Feed Settings"
 
@@ -80,7 +81,7 @@ Item {
 
                 Button {
                     id: addButton
-                    icon.name: "list-add"
+                    icon.name: C.ICON_ADD
                     text: "Add"
                     enabled: newSubredditField.text.trim() !== ""
                     onClicked: {
@@ -94,7 +95,7 @@ Item {
             Rectangle {
                 Kirigami.FormData.label: "Active:"
                 Layout.fillWidth: true
-                implicitHeight: Kirigami.Units.gridUnit * 12
+                implicitHeight: Kirigami.Units.gridUnit * C.CONFIG_LIST_HEIGHT_GU
                 color: Kirigami.Theme.backgroundColor
                 border.color: Kirigami.Theme.alternateBackgroundColor
                 radius: Kirigami.Units.smallSpacing
@@ -133,7 +134,7 @@ Item {
                                 }
                                 
                                 ToolButton {
-                                    icon.name: "go-up"
+                                    icon.name: C.ICON_MOVE_UP
                                     display: AbstractButton.IconOnly
                                     Layout.alignment: Qt.AlignVCenter
                                     ToolTip.text: "Move Up"
@@ -146,7 +147,7 @@ Item {
                                 }
 
                                 ToolButton {
-                                    icon.name: "go-down"
+                                    icon.name: C.ICON_MOVE_DOWN
                                     display: AbstractButton.IconOnly
                                     Layout.alignment: Qt.AlignVCenter
                                     ToolTip.text: "Move Down"
@@ -160,7 +161,7 @@ Item {
 
                                 ToolButton {
                                     id: removeButton
-                                    icon.name: "list-remove"
+                                    icon.name: C.ICON_REMOVE
                                     text: "Remove"
                                     display: AbstractButton.IconOnly
                                     Layout.alignment: Qt.AlignVCenter
@@ -178,7 +179,7 @@ Item {
                             anchors.centerIn: parent
                             text: "No subreddits added."
                             visible: subredditModel.count === 0
-                            opacity: 0.6
+                            opacity: C.OPACITY_DISABLED
                         }
                     }
                 }

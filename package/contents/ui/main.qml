@@ -4,6 +4,7 @@ import QtQuick.Controls
 import org.kde.plasma.plasmoid
 import org.kde.kirigami as Kirigami
 import "Utils.js" as Utils
+import "Constants.js" as C
 
 PlasmoidItem {
     id: root
@@ -45,7 +46,7 @@ PlasmoidItem {
 
     Timer {
         id: refreshTimer
-        interval: 15 * 60 * 1000
+        interval: C.BACKGROUND_REFRESH_INTERVAL_MS
         running: true
         repeat: true
         onTriggered: apiBackend.fetchAllSubreddits()
@@ -56,9 +57,9 @@ PlasmoidItem {
     }
 
     onExpandedChanged: {
-        if (expanded) {
-            const cacheKey = `${apiBackend.currentSubreddit}_${apiBackend.currentSortOrder || "hot"}`
-            if (apiBackend.isCacheStale(cacheKey, 5)) {
+        if (root.expanded && !apiBackend.isFetching) {
+            const cacheKey = `${apiBackend.currentSubreddit}_${apiBackend.currentSortOrder || C.DEFAULT_SORT}`
+            if (apiBackend.isCacheStale(cacheKey, C.CACHE_STALE_MINUTES)) {
                 apiBackend.fetchAllSubreddits()
             }
         }

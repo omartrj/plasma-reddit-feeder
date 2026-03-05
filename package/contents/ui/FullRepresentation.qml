@@ -4,18 +4,19 @@ import QtQuick.Controls
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
+import "Constants.js" as C
 
 Item {
     id: fullRoot
-    Layout.minimumWidth: Kirigami.Units.gridUnit * 14
-    Layout.preferredWidth: Kirigami.Units.gridUnit * 18
-    Layout.minimumHeight: Kirigami.Units.gridUnit * 24
+    Layout.minimumWidth: Kirigami.Units.gridUnit * C.PANEL_MIN_WIDTH_GU
+    Layout.preferredWidth: Kirigami.Units.gridUnit * C.PANEL_PREFERRED_WIDTH_GU
+    Layout.minimumHeight: Kirigami.Units.gridUnit * C.PANEL_MIN_HEIGHT_GU
 
     property int now: Math.floor(Date.now() / 1000)
 
     Timer {
         id: ageTimer
-        interval: 60000
+        interval: C.AGE_LABEL_UPDATE_INTERVAL_MS
         repeat: true
         running: true
         onTriggered: fullRoot.now = Math.floor(Date.now() / 1000)
@@ -76,7 +77,7 @@ Item {
             }
 
             ToolButton {
-                icon.name: "view-sort"
+                icon.name: C.ICON_SORT
                 display: AbstractButton.IconOnly
                 Layout.alignment: Qt.AlignVCenter
                 
@@ -153,7 +154,7 @@ Item {
             }
 
             ToolButton {
-                icon.name: "window-pin"
+                icon.name: C.ICON_PIN
                 display: AbstractButton.IconOnly
                 Layout.alignment: Qt.AlignVCenter
                 checkable: true
@@ -191,7 +192,7 @@ Item {
                 width: parent.width - (Kirigami.Units.largeSpacing * 2)
                 visible: postsModel.count === 0
                 text: root.isFetching ? "Loading Posts..." : (root.fetchError !== "" ? root.fetchError : "No posts found")
-                icon.name: root.isFetching ? "view-refresh" : (root.fetchError !== "" ? "network-disconnect" : "application-rss+xml")
+                icon.name: root.isFetching ? C.ICON_REFRESH : (root.fetchError !== "" ? C.ICON_ERROR : C.ICON_FEED)
             }
         }
 
@@ -202,7 +203,7 @@ Item {
             Layout.bottomMargin: 2
 
             ToolButton {
-                icon.name: "view-refresh"
+                icon.name: C.ICON_REFRESH
                 icon.width: Kirigami.Units.iconSizes.small
                 icon.height: Kirigami.Units.iconSizes.small
                 display: AbstractButton.IconOnly

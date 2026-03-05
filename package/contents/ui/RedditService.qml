@@ -1,12 +1,16 @@
 import QtQuick
+import org.kde.plasma.plasmoid
 import "Utils.js" as Utils
+import "Constants.js" as C
 
 Item {
     id: service
 
+    readonly property string userAgent: `plasma-reddit-feeder/${Plasmoid.metaData.version} (KDE Plasma 6)`
+
     // Inputs
     property string configuredSubreddits: ""
-    property string defaultSortOrder: "hot"
+    property string defaultSortOrder: C.DEFAULT_SORT
 
     // State
     property bool isFetching: false
@@ -32,7 +36,7 @@ Item {
 
     Timer {
         id: staggerTimer
-        interval: 2000
+        interval: C.STAGGER_DELAY_MS
         repeat: false
         onTriggered: fetchNextStaggered()
     }
@@ -57,10 +61,10 @@ Item {
     function handleBackoff(resetHeader) {
         staggerTimer.stop()
         service.isFetching = false
-        const resetSecs = parseInt(resetHeader) || 60
+        const resetSecs = parseInt(resetHeader) || C.BACKOFF_DEFAULT_SECONDS
         const delaySecs = service.backoffDelay === 0
             ? resetSecs
-            : Math.min(service.backoffDelay * 2, 600)
+            : Math.min(service.backoffDelay * 2, C.BACKOFF_MAX_SECONDS)
         service.backoffDelay = delaySecs
         service.isBackingOff = true
         service.fetchError = `Rate limited. Retrying in ${delaySecs}s`
@@ -109,6 +113,7 @@ Item {
             console.log("[reddit-feeder] fetchAllSubreddits blocked: backoff active")
             return
         }
+        service.isFetching = true
         staggerTimer.stop()
         service.staggerIndex = 0
         fetchNextStaggered()
@@ -120,7 +125,7 @@ Item {
         const sub = service.activeSubredditList[service.staggerIndex]
         const sortMode = service.currentSortOrder || "hot"
         const cacheKey = `${sub}_${sortMode}`
-        const targetUrl = `https://www.reddit.com/r/${sub}/${sortMode}.json`
+        const targetUrl = `${C.REDDIT_BASE_URL}/r/${sub}/${sortMode}.json`
 
         console.log(`[reddit-feeder] [stagger ${service.staggerIndex + 1}/${service.activeSubredditList.length}] GET ${targetUrl}`)
 
@@ -180,7 +185,7 @@ Item {
                 staggerTimer.restart()
             }
         }
-        xhr.setRequestHeader("User-Agent", "plasma-reddit-feeder/1.2 (KDE Plasma 6)")
+        xhr.setRequestHeader("User-Agent", userAgent)
         xhr.send()
     }
 
@@ -219,8 +224,8 @@ Item {
 
         const cacheKey = `${service.currentSubreddit}_${service.currentSortOrder || "hot"}`
 
-        // Cache-first with TTL: use cache if new (<5min), otherwise show stale cache while fetching new data
-        if (service.redditCache[cacheKey] && !isCacheStale(cacheKey, 5)) {
+        // Cache-first with TTL: use cache if new, otherwise show stale cache while fetching new data
+        if (service.redditCache[cacheKey] && !isCacheStale(cacheKey, C.CACHE_STALE_MINUTES)) {
             service.lastFetchTime = service.redditCacheMeta[cacheKey]?.fetchedAt ?? 0
             processRedditResponse(service.redditCache[cacheKey], true)
             return
@@ -242,7 +247,7 @@ Item {
         
         const xhr = new XMLHttpRequest()
         service.currentRequest = xhr
-        const targetUrl = `https://www.reddit.com/r/${service.currentSubreddit}/${service.currentSortOrder || "hot"}.json`
+        const targetUrl = `${C.REDDIT_BASE_URL}/r/${service.currentSubreddit}/${service.currentSortOrder || C.DEFAULT_SORT}.json`
         
         xhr.open("GET", targetUrl)
         xhr.onreadystatechange = () => {
@@ -281,7 +286,7 @@ Item {
                 }
             }
         }
-        xhr.setRequestHeader("User-Agent", "plasma-reddit-feeder/1.2 (KDE Plasma 6)")
+        xhr.setRequestHeader("User-Agent", userAgent)
         xhr.send()
     }
 

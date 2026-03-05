@@ -2,11 +2,12 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import "Constants.js" as C
 
 Item {
     id: page
-    implicitWidth: Kirigami.Units.gridUnit * 25
-    implicitHeight: Kirigami.Units.gridUnit * 30
+    implicitWidth: Kirigami.Units.gridUnit * C.CONFIG_PAGE_WIDTH_GU
+    implicitHeight: Kirigami.Units.gridUnit * C.CONFIG_PAGE_HEIGHT_GU
     
     property string title: "Appearance"
 

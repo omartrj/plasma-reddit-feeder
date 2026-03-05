@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import org.kde.kirigami as Kirigami
 import "Utils.js" as Utils
+import "Constants.js" as C
 
 Kirigami.AbstractCard {
     width: ListView.view.width
@@ -21,14 +22,14 @@ Kirigami.AbstractCard {
                 
                 Label {
                     text: `u/${model.author}`
-                    opacity: 0.7
+                    opacity: C.OPACITY_MUTED
                     font.pointSize: root.authorFontSize
                 }
 
                 Label {
                     visible: root.showDate && model.created_utc !== ""
                     text: `• ${model.created_utc}`
-                    opacity: 0.7
+                    opacity: C.OPACITY_MUTED
                     font.pointSize: root.authorFontSize
                 }
 
@@ -127,7 +128,7 @@ Kirigami.AbstractCard {
                     visible: root.showScore
                     spacing: Kirigami.Units.smallSpacing / 2
                     Kirigami.Icon {
-                        source: "arrow-up-double"
+                        source: C.ICON_SCORE
                         implicitWidth: Kirigami.Units.iconSizes.smallMedium
                         implicitHeight: Kirigami.Units.iconSizes.smallMedium
                         color: Kirigami.Theme.textColor
@@ -135,7 +136,7 @@ Kirigami.AbstractCard {
                     Label {
                         text: model.score
                         font.pointSize: root.authorFontSize
-                        opacity: 0.8
+                        opacity: C.OPACITY_MUTED
                     }
                 }
 
@@ -144,7 +145,7 @@ Kirigami.AbstractCard {
                     visible: root.showComments
                     spacing: Kirigami.Units.smallSpacing / 2
                     Kirigami.Icon {
-                        source: "edit-comment"
+                        source: C.ICON_COMMENTS
                         implicitWidth: Kirigami.Units.iconSizes.smallMedium
                         implicitHeight: Kirigami.Units.iconSizes.smallMedium
                         color: Kirigami.Theme.textColor
@@ -152,7 +153,7 @@ Kirigami.AbstractCard {
                     Label {
                         text: model.num_comments
                         font.pointSize: root.authorFontSize
-                        opacity: 0.8
+                        opacity: C.OPACITY_MUTED
                     }
                 }
             }
@@ -163,8 +164,8 @@ Kirigami.AbstractCard {
             
             readonly property real boundedSize: {
                 const textHeight = textColumn.implicitHeight;
-                const minSize = Kirigami.Units.gridUnit * 3;
-                const maxSize = Kirigami.Units.gridUnit * 5;
+                const minSize = Kirigami.Units.gridUnit * C.THUMBNAIL_MIN_SIZE_GU;
+                const maxSize = Kirigami.Units.gridUnit * C.THUMBNAIL_MAX_SIZE_GU;
                 
                 return Math.min(maxSize, Math.max(minSize, textHeight));
             }
@@ -179,7 +180,7 @@ Kirigami.AbstractCard {
                 fillMode: Image.PreserveAspectCrop
                 asynchronous: true
                 // "Blur" effect by heavily reducing opacity if it's sensitive content
-                opacity: (root.showTags && (model.over_18 || model.spoiler)) ? 0.15 : 1.0
+                opacity: (root.showTags && (model.over_18 || model.spoiler)) ? C.THUMBNAIL_OPACITY_SENSITIVE : 1.0
                 
                 Behavior on opacity {
                     NumberAnimation { duration: Kirigami.Units.shortDuration }
@@ -191,9 +192,9 @@ Kirigami.AbstractCard {
                 anchors.centerIn: parent
                 width: Kirigami.Units.iconSizes.large
                 height: width
-                source: "view-hidden"
+                source: C.ICON_HIDDEN
                 visible: root.showTags && (model.over_18 || model.spoiler)
-                opacity: 0.8
+                opacity: C.OPACITY_MUTED
             }
         }
     }
