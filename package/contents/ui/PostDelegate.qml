@@ -179,12 +179,9 @@ Kirigami.AbstractCard {
                 source: model.thumbnail ?? ""
                 fillMode: Image.PreserveAspectCrop
                 asynchronous: true
-                // "Blur" effect by heavily reducing opacity if it's sensitive content
-                opacity: (root.blurNsfw && model.over_18) ? C.THUMBNAIL_OPACITY_SENSITIVE : 1.0
-                
-                Behavior on opacity {
-                    NumberAnimation { duration: Kirigami.Units.shortDuration }
-                }
+                smooth: true
+                // Blur: load at tiny resolution and let Qt bilinear-scale it back up
+                sourceSize: (root.blurNsfw && model.over_18) ? Qt.size(C.THUMBNAIL_BLUR_SIZE, C.THUMBNAIL_BLUR_SIZE) : Qt.size(0, 0)
             }
             
             // Icon to indicate content is hidden over the thumbnail

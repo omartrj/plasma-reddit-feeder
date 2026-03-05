@@ -23,11 +23,11 @@ const CONFIG_PAGE_HEIGHT_GU = 32
 const CONFIG_LIST_HEIGHT_GU = 12
 
 // --- UI: Thumbnail sizes (in grid units) ---
-const THUMBNAIL_MIN_SIZE_GU = 3
-const THUMBNAIL_MAX_SIZE_GU = 5
+const THUMBNAIL_MIN_SIZE_GU  = 3
+const THUMBNAIL_MAX_SIZE_GU  = 6
+const THUMBNAIL_BLUR_SIZE    = 15   // NSFW blur: internal downsample resolution (px)
 
 // --- UI: Opacity ---
-const THUMBNAIL_OPACITY_SENSITIVE = 0.15   // NSFW / spoiler thumbnail
 const OPACITY_MUTED               = 0.7    // secondary text: author, date, score, comments
 const OPACITY_DISABLED            = 0.5    // placeholder text (empty state)
 
