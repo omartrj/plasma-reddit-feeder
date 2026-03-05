@@ -1,7 +1,7 @@
 import QtQuick
 import org.kde.plasma.plasmoid
-import "../Utils.js" as Utils
-import "../Constants.js" as C
+import "js/Utils.js" as Utils
+import "js/Constants.js" as C
 
 Item {
     id: service

@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
-import "../Constants.js" as C
+import "../js/Constants.js" as C
 
 Item {
     id: page

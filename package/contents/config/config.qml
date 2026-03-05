@@ -5,11 +5,11 @@ ConfigModel {
     ConfigCategory {
         name: "General"
         icon: "configure"
-        source: "ConfigGeneral.qml"
+        source: "config/ConfigGeneral.qml"
     }
     ConfigCategory {
         name: "Appearance"
         icon: "preferences-desktop-theme"
-        source: "ConfigAppearance.qml"
+        source: "config/ConfigAppearance.qml"
     }
 }

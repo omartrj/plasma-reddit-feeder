@@ -4,8 +4,8 @@ import QtQuick.Controls
 import org.kde.plasma.plasmoid
 import org.kde.plasma.plasma5support as PlasmaSupport
 import org.kde.kirigami as Kirigami
-import "../Utils.js" as Utils
-import "../Constants.js" as C
+import "js/Utils.js" as Utils
+import "js/Constants.js" as C
 
 PlasmoidItem {
     id: root
