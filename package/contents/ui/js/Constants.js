@@ -2,7 +2,7 @@
 
 // --- Timing ---
 const BACKGROUND_REFRESH_INTERVAL_MS = 15 * 60 * 1000   // background timer between full refreshes
-const STAGGER_DELAY_MS               = 2000             // delay between staggered sub fetches
+const STAGGER_DELAY_MS               = 1000             // delay between staggered sub fetches
 const AGE_LABEL_UPDATE_INTERVAL_MS   = 60000            // how often the "updated X min ago" label ticks
 const CACHE_STALE_MINUTES            = 5                // cache age threshold for on-open / sort-change fetches
 const BACKOFF_DEFAULT_SECONDS        = 60               // fallback backoff if x-ratelimit-reset header is missing
