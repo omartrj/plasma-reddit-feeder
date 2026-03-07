@@ -153,22 +153,7 @@ Item {
                 }
             }
 
-            ToolButton {
-                icon.name: C.ICON_PIN
-                display: AbstractButton.IconOnly
-                Layout.alignment: Qt.AlignVCenter
-                checkable: true
-                checked: !root.hideOnWindowDeactivate
-                
-                // Only show this button if we are in a popup from a panel
-                visible: Plasmoid.location !== PlasmaCore.Types.Floating
 
-                onToggled: {
-                    root.hideOnWindowDeactivate = !checked
-                }
-                ToolTip.text: checked ? "Unpin Widget" : "Keep Open"
-                ToolTip.visible: hovered
-            }
         }
 
         Item {
@@ -219,6 +204,23 @@ Item {
                 font.pointSize: Kirigami.Theme.smallFont.pointSize
                 color: Kirigami.Theme.disabledTextColor
                 Layout.fillWidth: true
+            }
+
+            ToolButton {
+                icon.name: C.ICON_PIN
+                display: AbstractButton.IconOnly
+                Layout.alignment: Qt.AlignVCenter
+                checkable: true
+                checked: !root.hideOnWindowDeactivate
+
+                // Only show this button if we are in a popup from a panel
+                visible: Plasmoid.location !== PlasmaCore.Types.Floating
+
+                onToggled: {
+                    root.hideOnWindowDeactivate = !checked
+                }
+                ToolTip.text: "Keep open"
+                ToolTip.visible: hovered
             }
         }
     }
